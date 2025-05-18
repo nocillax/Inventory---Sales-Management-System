@@ -1,0 +1,118 @@
+
+✅ Entity Framework Code First Schema (Clean Naming Conventions)
+csharp
+Copy
+Edit
+// =========================
+//        User.cs
+// =========================
+public class User
+{
+    public int UserId { get; set; }
+
+    [Required]
+    public string Username { get; set; }
+
+    [Required, EmailAddress]
+    public string Email { get; set; }
+
+    [Required]
+    public string PasswordHash { get; set; }
+
+    [Required]
+    public string Role { get; set; } // "Manager" or "Salesperson"
+
+    public virtual ICollection<Sale> Sales { get; set; }
+}
+csharp
+Copy
+Edit
+// =========================
+//     Category.cs
+// =========================
+public class Category
+{
+    public int CategoryId { get; set; }
+
+    [Required]
+    public string Name { get; set; }
+
+    public virtual ICollection<Product> Products { get; set; }
+}
+csharp
+Copy
+Edit
+// =========================
+//      Product.cs
+// =========================
+public class Product
+{
+    public int ProductId { get; set; }
+
+    [Required]
+    public string Name { get; set; }
+
+    [Required]
+    public decimal Price { get; set; }
+
+    [Required]
+    public decimal Cost { get; set; }
+
+    [Required]
+    public int QuantityAvailable { get; set; }
+
+    public int LowStockThreshold { get; set; }
+
+    public bool IsActive { get; set; } = true;
+
+    // Foreign key convention
+    public int CategoryId { get; set; }
+    public virtual Category Category { get; set; }
+
+    public virtual ICollection<SaleItem> SaleItems { get; set; }
+}
+csharp
+Copy
+Edit
+// =========================
+//        Sale.cs
+// =========================
+public class Sale
+{
+    public int SaleId { get; set; }
+
+    public DateTime Date { get; set; } = DateTime.Now;
+
+    public string BuyerName { get; set; }
+
+    [Required]
+    public decimal TotalAmount { get; set; }
+
+    // Foreign key convention
+    public int UserId { get; set; }
+    public virtual User User { get; set; }
+
+    public virtual ICollection<SaleItem> SaleItems { get; set; }
+}
+csharp
+Copy
+Edit
+// =========================
+//      SaleItem.cs
+// =========================
+public class SaleItem
+{
+    public int SaleItemId { get; set; }
+
+    public int Quantity { get; set; }
+
+    [Required]
+    public decimal PriceAtSale { get; set; }
+
+    // Foreign key conventions
+    public int SaleId { get; set; }
+    public virtual Sale Sale { get; set; }
+
+    public int ProductId { get; set; }
+    public virtual Product Product { get; set; }
+}
