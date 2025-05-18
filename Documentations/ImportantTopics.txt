@@ -1,0 +1,22 @@
+1 --------------------------------------------------------------------------------------------------------
+  The virtual keyword enables lazy loading, which means:
+
+  EF will auto-fetch related entities only when you access them.
+  
+  Example with virtual:
+  
+  var sale = db.Sales.Find(1);
+  var items = sale.SaleItems; // EF triggers SQL to fetch SaleItems here
+  
+  Without virtual:
+  That line above won’t work unless you manually load it:
+  
+  var sale = db.Sales
+               .Include(s => s.SaleItems)
+               .FirstOrDefault(s => s.SaleId == 1);
+  
+  If you forget .Include(), you’ll get null or an empty list.
+
+2 --------------------------------------------------------------------------------------------------------
+  The ICollection<> version refers to the "one-to-many" relationship
+3 --------------------------------------------------------------------------------------------------------
