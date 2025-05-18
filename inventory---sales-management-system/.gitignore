@@ -1,0 +1,46 @@
+# Ignore Visual Studio temporary files, build results, and user-specific files
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Build results
+bin/
+obj/
+[Bb]uild/
+[Dd]ebug*/
+[Rr]elease*/
+x64/
+x86/
+
+# SQL Server
+*.mdf
+*.ldf
+
+# Entity Framework
+*.dbmdl
+
+# IIS Express
+*.vspscc
+*.vssscc
+*.cache
+*.pdb
+
+# Logs
+*.log
+
+# Resharper
+_ReSharper*/
+*.[Rr]e[Ss]harper
+
+# Others
+*.ncrunch*
+*.nupkg
+*.snk
+*.swp
+*.orig
+*.tmp
+
+# Node
+node_modules/
