@@ -23,6 +23,7 @@ namespace inventory___sales_management_system.Models
         [Required]
         public int QuantityAvailable { get; set; }
 
+        [Required]
         public int LowStockThreshold { get; set; }
 
         public bool IsActive { get; set; } = true;
