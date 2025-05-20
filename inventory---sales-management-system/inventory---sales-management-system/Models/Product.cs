@@ -27,6 +27,7 @@ namespace inventory___sales_management_system.Models
 
         public bool IsActive { get; set; } = true;
 
+        [Required]
         public int CategoryId { get; set; }
 
         public virtual Category Category { get; set; }
