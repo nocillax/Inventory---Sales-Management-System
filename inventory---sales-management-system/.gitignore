@@ -15,8 +15,8 @@ x64/
 x86/
 
 # SQL Server
-*.mdf
-*.ldf
+# *.mdf
+# *.ldf
 
 # Entity Framework
 *.dbmdl
