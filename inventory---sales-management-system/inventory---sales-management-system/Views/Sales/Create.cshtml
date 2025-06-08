@@ -1,65 +1,156 @@
-﻿@model inventory___sales_management_system.Models.Sale
+﻿@model List<inventory___sales_management_system.Models.Product>
 
 @{
-    Layout = "~/Views/Shared/_Layout.cshtml";
-    ViewBag.Title = "Create";
+    ViewBag.Title = "Create Sale";
 }
+<h2>Create Sale</h2>
 
-<h2>Create</h2>
-
-
-@using (Html.BeginForm()) 
+@using (Html.BeginForm("Create", "Sales", FormMethod.Post))
 {
     @Html.AntiForgeryToken()
-    
-    <div class="form-horizontal">
-        <h4>Sale</h4>
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        <div class="form-group">
-            @Html.LabelFor(model => model.Date, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Date, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Date, "", new { @class = "text-danger" })
-            </div>
-        </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.BuyerName, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.BuyerName, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.BuyerName, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.TotalAmount, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.TotalAmount, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.TotalAmount, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.UserId, "UserId", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownList("UserId", null, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.UserId, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Create" class="btn btn-default" />
-            </div>
-        </div>
+    <div>
+        <label>Date</label>
+        <input type="date" name="date" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
     </div>
+
+    <div>
+        <label>Buyer Name</label>
+        <input type="text" name="buyerName" class="form-control" />
+    </div>
+
+    <hr />
+
+    <div>
+        <label>Select Product</label>
+        <select id="productSelect" class="form-control">
+            <option value="">-- Select Product --</option>
+            @foreach (var p in Model)
+            {
+                <option value="@p.ProductId" data-price="@p.Price">@p.Name</option>
+            }
+        </select>
+
+        <label>Quantity</label>
+        <input type="number" id="qtyInput" value="1" min="1" class="form-control" style="width: 100px;" />
+        <button type="button" id="addProductBtn" class="btn btn-primary" style="margin-top:10px;">Add Product</button>
+    </div>
+
+    <hr />
+
+    <table class="table" id="productsTable" style="display:none;">
+        <thead>
+            <tr>
+                <th>Product Name</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Subtotal</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- rows added here by JS -->
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="3" style="text-align:right"><strong>Total:</strong></td>
+                <td><span id="totalAmount">0.00</span></td>
+                <td></td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <input type="submit" value="Create Sale" class="btn btn-success" style="margin-top:20px;" />
 }
 
-<div>
-    @Html.ActionLink("Back to List", "Index")
-</div>
-
 @section Scripts {
-    @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        const productsData = {};
+        @foreach (var p in Model)
+        {
+            <text>productsData[@p.ProductId] = { name: "@p.Name", price: @p.Price };</text>
+        }
+
+        const productsTable = document.getElementById('productsTable');
+        const tbody = productsTable.querySelector('tbody');
+        const totalAmountSpan = document.getElementById('totalAmount');
+        let totalAmount = 0;
+
+        // Keep track of added products to prevent duplicates
+        const addedProducts = {};
+
+        document.getElementById('addProductBtn').addEventListener('click', function () {
+            const select = document.getElementById('productSelect');
+            const qtyInput = document.getElementById('qtyInput');
+            const productId = select.value;
+            const qty = parseInt(qtyInput.value);
+
+            if (!productId) {
+                alert('Please select a product');
+                return;
+            }
+            if (qty < 1 || isNaN(qty)) {
+                alert('Please enter a valid quantity');
+                return;
+            }
+            if (addedProducts[productId]) {
+                alert('Product already added');
+                return;
+            }
+
+            const product = productsData[productId];
+
+            // Create new row
+            const tr = document.createElement('tr');
+
+            tr.innerHTML = `
+                <td>${product.name}<input type="hidden" name="productIds" value="${productId}" /></td>
+                <td><input type="number" name="quantities" value="${qty}" min="1" class="form-control qtyInput" style="width:80px;" /></td>
+                <td>${product.price.toFixed(2)}</td>
+                <td class="subtotal">${(product.price * qty).toFixed(2)}</td>
+                <td><button type="button" class="btn btn-danger btn-sm removeBtn">Remove</button></td>
+            `;
+
+            tbody.appendChild(tr);
+            productsTable.style.display = '';
+            addedProducts[productId] = true;
+
+            updateTotal();
+
+            // Handle quantity change to update subtotal and total
+            tr.querySelector('.qtyInput').addEventListener('input', function (e) {
+                let val = parseInt(e.target.value);
+                if (isNaN(val) || val < 1) {
+                    val = 1;
+                    e.target.value = val;
+                }
+                const subtotalCell = tr.querySelector('.subtotal');
+                subtotalCell.textContent = (product.price * val).toFixed(2);
+                updateTotal();
+            });
+
+            // Handle remove button
+            tr.querySelector('.removeBtn').addEventListener('click', function () {
+                delete addedProducts[productId];
+                tr.remove();
+                if (tbody.children.length === 0) {
+                    productsTable.style.display = 'none';
+                }
+                updateTotal();
+            });
+
+            // Reset dropdown and qty input
+            select.value = '';
+            qtyInput.value = 1;
+        });
+
+        function updateTotal() {
+            totalAmount = 0;
+            tbody.querySelectorAll('tr').forEach(row => {
+                const subtotal = parseFloat(row.querySelector('.subtotal').textContent);
+                totalAmount += subtotal;
+            });
+            totalAmountSpan.textContent = totalAmount.toFixed(2);
+        }
+    </script>
 }

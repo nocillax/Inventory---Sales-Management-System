@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using Antlr.Runtime.Tree;
 using inventory___sales_management_system.Context;
 using inventory___sales_management_system.Models;
 
@@ -23,101 +24,105 @@ namespace inventory___sales_management_system.Controllers
         }
 
         // GET: Sales/Details/5
-        public ActionResult Details(int? id)
+        public ActionResult Details(int id)
         {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Sale sale = db.Sales.Find(id);
-            if (sale == null)
-            {
-                return HttpNotFound();
-            }
+            var sale = db.Sales
+                         .Include(s => s.User)
+                         .Include(s => s.SaleItems.Select(si => si.Product))
+                         .FirstOrDefault(s => s.SaleId == id);
+
             return View(sale);
         }
 
         // GET: Sales/Create
         public ActionResult Create()
         {
-            ViewBag.UserId = new SelectList(db.Users, "UserId", "Username");
-            return View();
+            var productsListItems = db.Products
+                .Where(p => p.IsActive)
+                .ToList();
+
+            return View(productsListItems); 
         }
+
 
         // POST: Sales/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "SaleId,Date,BuyerName,TotalAmount,UserId")] Sale sale)
+        //[ValidateAntiForgeryToken]
+        public ActionResult Create(DateTime date, string buyerName, int[] productIds, int[] quantities) 
         {
-            if (ModelState.IsValid)
+            System.Diagnostics.Debug.WriteLine($"Date: {date}, Buyer: {buyerName}");
+            System.Diagnostics.Debug.WriteLine($"Products count: {productIds?.Length ?? 0}");
+            System.Diagnostics.Debug.WriteLine($"Quantities count: {quantities?.Length ?? 0}");
+
+
+            if (!ModelState.IsValid)
             {
-                db.Sales.Add(sale);
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                ViewBag.ProductsList = new SelectList(db.Products.Where(p => p.IsActive), "ProductId", "Name");
+                return View();
             }
 
-            ViewBag.UserId = new SelectList(db.Users, "UserId", "Username", sale.UserId);
-            return View(sale);
-        }
+            if (productIds == null || productIds.Length == 0)
+            {
+                ModelState.AddModelError("", "Please select at least one product.");
+                ViewBag.ProductsList = new SelectList(db.Products.Where(p => p.IsActive), "ProductId", "Name");
+                return View();
+            }
 
-        // GET: Sales/Edit/5
-        public ActionResult Edit(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Sale sale = db.Sales.Find(id);
-            if (sale == null)
-            {
-                return HttpNotFound();
-            }
-            ViewBag.UserId = new SelectList(db.Users, "UserId", "Username", sale.UserId);
-            return View(sale);
-        }
+            int userId = 1;
 
-        // POST: Sales/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "SaleId,Date,BuyerName,TotalAmount,UserId")] Sale sale)
-        {
-            if (ModelState.IsValid)
+            var sale = new Sale
             {
-                db.Entry(sale).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-            ViewBag.UserId = new SelectList(db.Users, "UserId", "Username", sale.UserId);
-            return View(sale);
-        }
+                Date = date,
+                BuyerName = buyerName,
+                UserId = userId,
+                SaleItems = new List<SaleItem>()
+            };
 
-        // GET: Sales/Delete/5
-        public ActionResult Delete(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Sale sale = db.Sales.Find(id);
-            if (sale == null)
-            {
-                return HttpNotFound();
-            }
-            return View(sale);
-        }
+            decimal totalAmount = 0;
 
-        // POST: Sales/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
-        {
-            Sale sale = db.Sales.Find(id);
-            db.Sales.Remove(sale);
+            for (int i = 0; i < productIds.Length; i++)
+            {
+                int productId = productIds[i];
+                int qty = quantities[i];
+
+                var product = db.Products.Find(productId);
+
+                if (product == null || !product.IsActive)
+                {
+                    ModelState.AddModelError("", $"Product with ID {productId} not found or inactive.");
+                    ViewBag.ProductsList = new SelectList(db.Products.Where(p => p.IsActive), "ProductId", "Name");
+                    return View();
+                }
+
+                if (product.QuantityAvailable < qty)
+                {
+                    ModelState.AddModelError("", $"Insufficient stock for product {product.Name}. Available: {product.QuantityAvailable}");
+                    ViewBag.ProductsList = new SelectList(db.Products.Where(p => p.IsActive), "ProductId", "Name");
+                    return View();
+                }
+
+                decimal priceAtSale = product.Price;
+
+                decimal totalPrice = priceAtSale * qty;
+                totalAmount += totalPrice;
+
+                product.QuantityAvailable -= qty;
+
+                sale.SaleItems.Add(new SaleItem
+                {
+                    ProductId = productId,
+                    Quantity = qty,
+                    PriceAtSale = priceAtSale
+                });
+
+
+            }
+
+            sale.TotalAmount = totalAmount;
+
+            db.Sales.Add(sale);
             db.SaveChanges();
+
             return RedirectToAction("Index");
         }
 

@@ -2,50 +2,55 @@
 
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
-    ViewBag.Title = "Details";
+    ViewBag.Title = "Sale Details";
 }
 
-<h2>Details</h2>
+<h2>Sale Details</h2>
 
 <div>
-    <h4>Sale</h4>
+    <h4>Sale Info</h4>
     <hr />
     <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.User.Username)
-        </dt>
+        <dt>@Html.DisplayNameFor(m => m.User.Username)</dt>
+        <dd>@Html.DisplayFor(m => m.User.Username)</dd>
 
-        <dd>
-            @Html.DisplayFor(model => model.User.Username)
-        </dd>
+        <dt>@Html.DisplayNameFor(m => m.Date)</dt>
+        <dd>@Html.DisplayFor(m => m.Date)</dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Date)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Date)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.BuyerName)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.BuyerName)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.TotalAmount)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.TotalAmount)
-        </dd>
-
+        <dt>@Html.DisplayNameFor(m => m.BuyerName)</dt>
+        <dd>@Html.DisplayFor(m => m.BuyerName)</dd>
     </dl>
 </div>
+
+<h4>Items Sold</h4>
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Product Name</th>
+            <th>Quantity</th>
+            <th>Price at Sale</th>
+            <th>Subtotal</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.SaleItems)
+        {
+            <tr>
+                <td>@(item.Product?.Name ?? "N/A")</td>
+                <td>@item.Quantity</td>
+                <td>@item.PriceAtSale.ToString("C")</td>
+                <td>@((item.Quantity * item.PriceAtSale).ToString("C"))</td>
+            </tr>
+        }
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="3" class="text-right"><strong>Total:</strong></td>
+            <td><strong>@Model.TotalAmount.ToString("C")</strong></td>
+        </tr>
+    </tfoot>
+</table>
+
 <p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.SaleId }) |
-    @Html.ActionLink("Back to List", "Index")
+    @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-secondary" })
 </p>
