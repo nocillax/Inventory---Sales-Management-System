@@ -3,7 +3,7 @@
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class CreateAllTables : DbMigration
+    public partial class AllUpdate : DbMigration
     {
         public override void Up()
         {
@@ -75,18 +75,41 @@
                     })
                 .PrimaryKey(t => t.UserId);
             
+            CreateTable(
+                "dbo.StockEntries",
+                c => new
+                    {
+                        StockEntryId = c.Int(nullable: false, identity: true),
+                        ProductId = c.Int(nullable: false),
+                        DateAdded = c.DateTime(nullable: false),
+                        Supplier = c.String(),
+                        CostPerQty = c.Decimal(nullable: false, precision: 18, scale: 2),
+                        QuantityAdded = c.Int(nullable: false),
+                        UserId = c.Int(nullable: false),
+                    })
+                .PrimaryKey(t => t.StockEntryId)
+                .ForeignKey("dbo.Products", t => t.ProductId, cascadeDelete: true)
+                .ForeignKey("dbo.Users", t => t.UserId, cascadeDelete: true)
+                .Index(t => t.ProductId)
+                .Index(t => t.UserId);
+            
         }
         
         public override void Down()
         {
-            DropForeignKey("dbo.SaleItems", "SaleId", "dbo.Sales");
+            DropForeignKey("dbo.StockEntries", "UserId", "dbo.Users");
+            DropForeignKey("dbo.StockEntries", "ProductId", "dbo.Products");
             DropForeignKey("dbo.Sales", "UserId", "dbo.Users");
+            DropForeignKey("dbo.SaleItems", "SaleId", "dbo.Sales");
             DropForeignKey("dbo.SaleItems", "ProductId", "dbo.Products");
             DropForeignKey("dbo.Products", "CategoryId", "dbo.Categories");
+            DropIndex("dbo.StockEntries", new[] { "UserId" });
+            DropIndex("dbo.StockEntries", new[] { "ProductId" });
             DropIndex("dbo.Sales", new[] { "UserId" });
             DropIndex("dbo.SaleItems", new[] { "ProductId" });
             DropIndex("dbo.SaleItems", new[] { "SaleId" });
             DropIndex("dbo.Products", new[] { "CategoryId" });
+            DropTable("dbo.StockEntries");
             DropTable("dbo.Users");
             DropTable("dbo.Sales");
             DropTable("dbo.SaleItems");

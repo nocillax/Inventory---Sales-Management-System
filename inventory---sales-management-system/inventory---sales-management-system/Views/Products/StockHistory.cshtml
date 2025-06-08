@@ -1,0 +1,36 @@
+﻿@model IEnumerable<inventory___sales_management_system.Models.StockEntry>
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Stock History";
+}
+
+<h2>Stock History for @ViewBag.ProductName</h2>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Date Added</th>
+            <th>Supplier</th>
+            <th>Cost per Unit</th>
+            <th>Quantity Added</th>
+            <th>Total Cost</th>
+            <th>Added By</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var entry in Model)
+        {
+            <tr>
+                <td>@entry.DateAdded.ToString("dd MMM yyyy")</td>
+                <td>@entry.Supplier</td>
+                <td>@entry.CostPerQty.ToString("C")</td>
+                <td>@entry.QuantityAdded</td>
+                <td>@entry.TotalCost.ToString("C")</td>
+                <td>@(entry.User?.Username ?? "N/A")</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@Html.ActionLink("Back to Product", "Details", "Products", new { id = ViewBag.ProductId }, new { @class = "btn btn-secondary" })

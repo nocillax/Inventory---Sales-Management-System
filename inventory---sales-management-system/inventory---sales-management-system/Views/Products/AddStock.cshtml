@@ -1,0 +1,36 @@
+﻿@model inventory___sales_management_system.Models.StockEntry
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Add Stock for " + ViewBag.ProductName;
+}
+
+<h2>@ViewBag.Title</h2>
+
+@using (Html.BeginForm("AddStock", "Products", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+
+    @Html.HiddenFor(m => m.ProductId)
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.Supplier)
+        @Html.TextBoxFor(m => m.Supplier, new { @class = "form-control", placeholder = "Supplier Name" })
+        @Html.ValidationMessageFor(m => m.Supplier, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.CostPerQty, "Cost per Unit")
+        @Html.TextBoxFor(m => m.CostPerQty, new { @class = "form-control", placeholder = "e.g. 25.00" })
+        @Html.ValidationMessageFor(m => m.CostPerQty, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.QuantityAdded, "Quantity to Add")
+        @Html.TextBoxFor(m => m.QuantityAdded, new { @class = "form-control", placeholder = "e.g. 100" })
+        @Html.ValidationMessageFor(m => m.QuantityAdded, "", new { @class = "text-danger" })
+    </div>
+
+    <button type="submit" class="btn btn-primary">Add Stock</button>
+    @Html.ActionLink("Back to Product", "Details", "Products", new { id = Model.ProductId }, new { @class = "btn btn-secondary ml-2" })
+}

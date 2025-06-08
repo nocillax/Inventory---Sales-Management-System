@@ -22,14 +22,10 @@
             @Html.DisplayNameFor(model => model.Price)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Cost)
-        </th>
-        <th>
             @Html.DisplayNameFor(model => model.QuantityAvailable)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.LowStockThreshold)
-        </th>
+            @Html.DisplayNameFor(model => model.DateEdited)
         <th>
             @Html.DisplayNameFor(model => model.IsActive)
         </th>
@@ -48,21 +44,18 @@
             @Html.DisplayFor(modelItem => item.Price)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Cost)
-        </td>
-        <td>
             @Html.DisplayFor(modelItem => item.QuantityAvailable)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.LowStockThreshold)
+            @Html.DisplayFor(modelItem => item.DateEdited)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.IsActive)
         </td>
         <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.ProductId }) |
-            @Html.ActionLink("Details", "Details", new { id=item.ProductId }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.ProductId })
+            @Html.ActionLink("Edit", "Edit", new { id = item.ProductId }) |
+            @Html.ActionLink("Details", "Details", new { id = item.ProductId }) |
+            @Html.ActionLink("Delete", "Delete", new { id = item.ProductId })
         </td>
     </tr>
 }

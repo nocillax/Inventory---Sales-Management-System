@@ -7,13 +7,13 @@ namespace inventory___sales_management_system.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.5.1")]
-    public sealed partial class CreateAllTables : IMigrationMetadata
+    public sealed partial class tableedits : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(CreateAllTables));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(tableedits));
         
         string IMigrationMetadata.Id
         {
-            get { return "202505180558528_CreateAllTables"; }
+            get { return "202506081752098_tableedits"; }
         }
         
         string IMigrationMetadata.Source

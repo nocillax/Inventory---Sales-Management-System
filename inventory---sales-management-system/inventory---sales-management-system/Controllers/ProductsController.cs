@@ -121,6 +121,68 @@ namespace inventory___sales_management_system.Controllers
             return RedirectToAction("Index");
         }
 
+        public ActionResult AddStock(int productId)
+        {
+            var product = db.Products.Find(productId);
+
+            ViewBag.ProductName = product.Name;
+            return View(new StockEntry { ProductId = productId });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult AddStock(StockEntry stockEntry)
+        {
+            if (!ModelState.IsValid)
+            {
+                var product = db.Products.Find(stockEntry.ProductId);
+                ViewBag.ProductName = product?.Name;
+                return View(stockEntry);
+            }
+
+            var productToUpdate = db.Products.Find(stockEntry.ProductId);
+            if (productToUpdate == null)
+                return HttpNotFound();
+
+            // Calculate weighted average cost
+            decimal totalCurrentCost = productToUpdate.Cost * productToUpdate.QuantityAvailable;
+            decimal totalNewCost = stockEntry.CostPerQty * stockEntry.QuantityAdded;
+            int newQuantity = productToUpdate.QuantityAvailable + stockEntry.QuantityAdded;
+
+            productToUpdate.Cost = (totalCurrentCost + totalNewCost) / newQuantity;
+            productToUpdate.QuantityAvailable = newQuantity;
+
+            // Set audit info (replace with logged in user ID when auth done)
+            stockEntry.DateAdded = DateTime.Now;
+            stockEntry.UserId = 2; // TODO: replace with actual user ID
+
+            db.StockEntries.Add(stockEntry);
+            db.SaveChanges();
+
+            return RedirectToAction("Details", "Products", new { id = stockEntry.ProductId });
+        }
+
+        public ActionResult StockHistory(int productId)
+        {
+            var product = db.Products.Find(productId);
+            if (product == null)
+            {
+                return HttpNotFound();
+            }
+
+            ViewBag.ProductName = product.Name;
+            ViewBag.ProductId = product.ProductId;
+
+            var stockEntries = db.StockEntries
+                                 .Include(se => se.User) // include user info
+                                 .Where(se => se.ProductId == productId)
+                                 .OrderByDescending(se => se.DateAdded)
+                                 .ToList();
+
+            return View(stockEntries);
+        }
+
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)

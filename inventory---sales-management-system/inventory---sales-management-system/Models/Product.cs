@@ -11,22 +11,24 @@ namespace inventory___sales_management_system.Models
     {
         public int ProductId { get; set; }
 
+        public DateTime DateEdited { get; set; } = DateTime.Now;
+
         [Required]
         public string Name { get; set; }
 
         [Required]
-        public decimal Price { get; set; }
+        public decimal Price { get; set; } = 0m;
 
         [Required]
-        public decimal Cost { get; set; }
+        public decimal Cost { get; set; } = 0m;
 
         [Required]
-        public int QuantityAvailable { get; set; }
+        public int QuantityAvailable { get; set; } = 0;
 
         [Required]
-        public int LowStockThreshold { get; set; }
+        public int LowStockThreshold { get; set; } = 0;
 
-        public bool IsActive { get; set; } = true;
+        public bool IsActive { get; set; } = false;
 
         [Required]
         public int CategoryId { get; set; }

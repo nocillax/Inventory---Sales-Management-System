@@ -7,13 +7,13 @@ namespace inventory___sales_management_system.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.5.1")]
-    public sealed partial class AddForeignKeyRelationsForAllTables : IMigrationMetadata
+    public sealed partial class tableeditss : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(AddForeignKeyRelationsForAllTables));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(tableeditss));
         
         string IMigrationMetadata.Id
         {
-            get { return "202505180610082_AddForeignKeyRelationsForAllTables"; }
+            get { return "202506081757041_tableeditss"; }
         }
         
         string IMigrationMetadata.Source

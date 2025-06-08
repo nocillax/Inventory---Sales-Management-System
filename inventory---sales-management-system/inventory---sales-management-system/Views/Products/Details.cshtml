@@ -67,9 +67,20 @@
             @Html.DisplayFor(model => model.IsActive)
         </dd>
 
+        <dt>
+            @Html.DisplayNameFor(model => model.DateEdited)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DateEdited)
+        </dd>
+
     </dl>
 </div>
 <p>
     @Html.ActionLink("Edit", "Edit", new { id = Model.ProductId }) |
     @Html.ActionLink("Back to List", "Index")
+    @Html.ActionLink("Add Stock", "AddStock", "Products", new { productId = Model.ProductId }, null) |
+    @Html.ActionLink("Stock History", "StockHistory", "Products", new { productId = Model.ProductId }, null)
+
 </p>

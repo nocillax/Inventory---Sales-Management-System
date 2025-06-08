@@ -69,7 +69,7 @@ namespace inventory___sales_management_system.Controllers
                 return View();
             }
 
-            int userId = 1;
+            int userId = 2;
 
             var sale = new Sale
             {
@@ -93,6 +93,11 @@ namespace inventory___sales_management_system.Controllers
                     ModelState.AddModelError("", $"Product with ID {productId} not found or inactive.");
                     ViewBag.ProductsList = new SelectList(db.Products.Where(p => p.IsActive), "ProductId", "Name");
                     return View();
+                }
+
+                if (!product.IsActive)
+                {
+                    continue;
                 }
 
                 if (product.QuantityAvailable < qty)

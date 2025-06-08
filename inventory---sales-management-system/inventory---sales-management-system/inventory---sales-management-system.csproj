@@ -140,19 +140,24 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202505180558528_CreateAllTables.cs" />
-    <Compile Include="Migrations\202505180558528_CreateAllTables.Designer.cs">
-      <DependentUpon>202505180558528_CreateAllTables.cs</DependentUpon>
+    <Compile Include="Migrations\202506081358575_AllUpdate.cs" />
+    <Compile Include="Migrations\202506081358575_AllUpdate.Designer.cs">
+      <DependentUpon>202506081358575_AllUpdate.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202505180610082_AddForeignKeyRelationsForAllTables.cs" />
-    <Compile Include="Migrations\202505180610082_AddForeignKeyRelationsForAllTables.Designer.cs">
-      <DependentUpon>202505180610082_AddForeignKeyRelationsForAllTables.cs</DependentUpon>
+    <Compile Include="Migrations\202506081752098_tableedits.cs" />
+    <Compile Include="Migrations\202506081752098_tableedits.Designer.cs">
+      <DependentUpon>202506081752098_tableedits.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202506081757041_tableeditss.cs" />
+    <Compile Include="Migrations\202506081757041_tableeditss.Designer.cs">
+      <DependentUpon>202506081757041_tableeditss.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Category.cs" />
     <Compile Include="Models\Product.cs" />
     <Compile Include="Models\Sale.cs" />
     <Compile Include="Models\SaleItem.cs" />
+    <Compile Include="Models\StockEntry.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -232,6 +237,8 @@
     <Content Include="Views\Sales\Details.cshtml" />
     <Content Include="Views\Sales\Index.cshtml" />
     <Content Include="Views\Sales\Invoice.cshtml" />
+    <Content Include="Views\Products\AddStock.cshtml" />
+    <Content Include="Views\Products\StockHistory.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -269,11 +276,14 @@
     <Content Include="Scripts\jquery-3.7.0.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202505180558528_CreateAllTables.resx">
-      <DependentUpon>202505180558528_CreateAllTables.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202506081358575_AllUpdate.resx">
+      <DependentUpon>202506081358575_AllUpdate.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202505180610082_AddForeignKeyRelationsForAllTables.resx">
-      <DependentUpon>202505180610082_AddForeignKeyRelationsForAllTables.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202506081752098_tableedits.resx">
+      <DependentUpon>202506081752098_tableedits.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202506081757041_tableeditss.resx">
+      <DependentUpon>202506081757041_tableeditss.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
