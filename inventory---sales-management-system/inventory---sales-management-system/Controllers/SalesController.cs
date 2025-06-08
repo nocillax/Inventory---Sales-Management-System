@@ -9,6 +9,7 @@ using System.Web.Mvc;
 using Antlr.Runtime.Tree;
 using inventory___sales_management_system.Context;
 using inventory___sales_management_system.Models;
+using Rotativa;
 
 namespace inventory___sales_management_system.Controllers
 {
@@ -123,7 +124,25 @@ namespace inventory___sales_management_system.Controllers
             db.Sales.Add(sale);
             db.SaveChanges();
 
+            TempData["SaleCreated"] = true;
+            TempData["SaleId"] = sale.SaleId;
+
             return RedirectToAction("Index");
+        }
+
+        public ActionResult Invoice(int id)
+        {
+            var sale = db.Sales
+                         .Include(s => s.User)
+                         .Include(s => s.SaleItems.Select(si => si.Product))
+                         .FirstOrDefault(s => s.SaleId == id);
+
+            return new ViewAsPdf("Invoice", sale)
+            {
+                //FileName = $"Invoice_{sale.SaleId}.pdf",
+                PageSize = Rotativa.Options.Size.A4,
+                PageOrientation = Rotativa.Options.Orientation.Portrait
+            };
         }
 
         protected override void Dispose(bool disposing)

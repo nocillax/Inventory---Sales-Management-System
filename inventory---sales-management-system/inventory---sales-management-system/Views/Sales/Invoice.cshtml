@@ -1,0 +1,79 @@
+﻿@model inventory___sales_management_system.Models.Sale
+
+@{
+    Layout = null;  // For clean PDF without layout
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Invoice - Sale #@Model.SaleId</title>
+    <style>
+        /* Simple styling for invoice */
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            margin: 20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .right {
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <h1>Invoice</h1>
+    <p><strong>Sale ID:</strong> @Model.SaleId</p>
+    <p><strong>Date:</strong> @Model.Date.ToString("dd MMM yyyy")</p>
+    <p><strong>Salesperson:</strong> @(Model.User?.Username ?? "N/A")</p>
+    <p><strong>Buyer Name:</strong> @(Model.BuyerName ?? "N/A")</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Product Name</th>
+                <th class="right">Quantity</th>
+                <th class="right">Price</th>
+                <th class="right">Subtotal</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.SaleItems)
+            {
+                <tr>
+                    <td>@(item.Product?.Name ?? "N/A")</td>
+                    <td class="right">@item.Quantity</td>
+                    <td class="right">@item.PriceAtSale.ToString("C")</td>
+                    <td class="right">@((item.Quantity * item.PriceAtSale).ToString("C"))</td>
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="3" class="right"><strong>Total:</strong></td>
+                <td class="right"><strong>@Model.TotalAmount.ToString("C")</strong></td>
+            </tr>
+        </tfoot>
+    </table>
+</body>
+</html>
