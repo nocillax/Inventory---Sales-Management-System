@@ -44,7 +44,7 @@
 <body>
     <h1>Invoice</h1>
     <p><strong>Sale ID:</strong> @Model.SaleId</p>
-    <p><strong>Date:</strong> @Model.Date.ToString("dd MMM yyyy")</p>
+    <p><strong>Date:</strong> @Model.Date.ToString("dd MMM yyyy hh:mm tt")</p>
     <p><strong>Salesperson:</strong> @(Model.User?.Username ?? "N/A")</p>
     <p><strong>Buyer Name:</strong> @(Model.BuyerName ?? "N/A")</p>
 

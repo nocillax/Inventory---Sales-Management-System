@@ -33,22 +33,22 @@ namespace inventory___sales_management_system.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Login(LoginViewModel model)
+        public ActionResult Login(LoginViewModel vm)
         {
             if (!ModelState.IsValid)
             {
-                return View(model);
+                return View(vm);
             }
 
-            string hashedPassword = HashPassword(model.Password);
+            string hashedPassword = HashPassword(vm.Password);
 
             var user = db.Users
-                .FirstOrDefault(u => u.Email == model.Email && u.PasswordHash == hashedPassword);
+                .FirstOrDefault(u => u.Email == vm.Email && u.PasswordHash == hashedPassword);
 
             if (user == null)
             {
                 ModelState.AddModelError("", "Invalid email or password.");
-                return View(model);
+                return View(vm);
             }
 
             // Set session or auth cookie here

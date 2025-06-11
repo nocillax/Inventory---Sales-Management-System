@@ -9,6 +9,9 @@ using System.Web.Mvc;
 using inventory___sales_management_system.Attributes;
 using inventory___sales_management_system.Context;
 using inventory___sales_management_system.Models;
+using inventory___sales_management_system.ViewModels;
+using inventory___sales_management_system.ViewModels.Product;
+using inventory___sales_management_system.ViewModels.Stock;
 
 namespace inventory___sales_management_system.Controllers
 {
@@ -47,150 +50,210 @@ namespace inventory___sales_management_system.Controllers
             return View(product);
         }
 
-        // GET: Products/Create
+        [RoleAuthorize("Manager")]
         public ActionResult Create()
         {
-            ViewBag.CategoryId = new SelectList(db.Categories, "CategoryId", "Name");
-            return View();
+            var vm = new CreateProductViewModel
+            {
+                Categories = new SelectList(db.Categories, "CategoryId", "Name")
+            };
+            return View(vm);
         }
 
-        // POST: Products/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        [RoleAuthorize("Manager")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "ProductId,Name,Price,Cost,QuantityAvailable,LowStockThreshold,IsActive,CategoryId")] Product product)
+        public ActionResult Create(CreateProductViewModel vm)
         {
             if (ModelState.IsValid)
             {
+                var product = new Product
+                {
+                    Name = vm.Name,
+                    CategoryId = vm.CategoryId,
+                    Price = 0m,
+                    Cost = 0m,
+                    QuantityAvailable = 0,
+                    LowStockThreshold = 0,
+                    IsActive = false,
+                    DateEdited = DateTime.Now
+                };
+
                 db.Products.Add(product);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            ViewBag.CategoryId = new SelectList(db.Categories, "CategoryId", "Name", product.CategoryId);
-            return View(product);
+            vm.Categories = new SelectList(db.Categories, "CategoryId", "Name", vm.CategoryId);
+
+            return View(vm);
         }
 
-        // GET: Products/Edit/5
-        public ActionResult Edit(int? id)
+
+        [RoleAuthorize("Manager")]
+        public ActionResult Edit(int id)
         {
-            if (id == null)
+            var product = db.Products.Find(id);
+            if (product == null) return HttpNotFound();
+
+            var vm = new EditProductViewModel
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Product product = db.Products.Find(id);
-            if (product == null)
-            {
-                return HttpNotFound();
-            }
-            ViewBag.CategoryId = new SelectList(db.Categories, "CategoryId", "Name", product.CategoryId);
-            return View(product);
+                ProductId = product.ProductId,
+                Name = product.Name,
+                Price = product.Price,
+                Cost = product.Cost,
+                QuantityAvailable = product.QuantityAvailable,
+                LowStockThreshold = product.LowStockThreshold,
+                IsActive = product.IsActive,
+                CategoryId = product.CategoryId,
+                Categories = new SelectList(db.Categories, "CategoryId", "Name", product.CategoryId)
+            };
+
+            return View(vm);
         }
 
-        // POST: Products/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        [RoleAuthorize("Manager")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ProductId,Name,Price,Cost,QuantityAvailable,LowStockThreshold,IsActive,CategoryId")] Product product)
+        public ActionResult Edit(EditProductViewModel vm)
         {
             if (ModelState.IsValid)
             {
+                var product = db.Products.Find(vm.ProductId);
+                if (product == null) return HttpNotFound();
+
+                product.Name = vm.Name;
+                product.Price = vm.Price;
+                product.Cost = vm.Cost;
+                product.QuantityAvailable = vm.QuantityAvailable;
+                product.LowStockThreshold = vm.LowStockThreshold;
+                product.IsActive = vm.IsActive;
+                product.CategoryId = vm.CategoryId;
+                product.DateEdited = DateTime.Now;
+
                 db.Entry(product).State = EntityState.Modified;
                 db.SaveChanges();
+
                 return RedirectToAction("Index");
             }
-            ViewBag.CategoryId = new SelectList(db.Categories, "CategoryId", "Name", product.CategoryId);
-            return View(product);
+
+            vm.Categories = new SelectList(db.Categories, "CategoryId", "Name", vm.CategoryId);
+            return View(vm);
         }
 
-        // GET: Products/Delete/5
-        public ActionResult Delete(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Product product = db.Products.Find(id);
-            if (product == null)
-            {
-                return HttpNotFound();
-            }
-            return View(product);
-        }
 
-        // POST: Products/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [RoleAuthorize("Manager")]
+        [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
+        public ActionResult Delete(int id)
         {
-            Product product = db.Products.Find(id);
+            var product = db.Products.Find(id);
+            if (product == null)
+                return HttpNotFound();
+
             db.Products.Remove(product);
             db.SaveChanges();
+
+            TempData["DeleteMessage"] = "Product deleted successfully!";
             return RedirectToAction("Index");
         }
 
+
+
+
+        // GET: AddStock
+        [RoleAuthorize("Manager")]
         public ActionResult AddStock(int productId)
         {
             var product = db.Products.Find(productId);
+            if (product == null)
+                return HttpNotFound();
 
             ViewBag.ProductName = product.Name;
-            return View(new StockEntry { ProductId = productId });
+
+            var vm = new AddStockViewModel
+            {
+                ProductId = productId
+            };
+
+            return View(vm);
         }
 
+        // POST: AddStock
+        [RoleAuthorize("Manager")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult AddStock(StockEntry stockEntry)
+        public ActionResult AddStock(AddStockViewModel vm)
         {
             if (!ModelState.IsValid)
             {
-                var product = db.Products.Find(stockEntry.ProductId);
+                var product = db.Products.Find(vm.ProductId);
                 ViewBag.ProductName = product?.Name;
-                return View(stockEntry);
+                return View(vm);
             }
 
-            var productToUpdate = db.Products.Find(stockEntry.ProductId);
+            var productToUpdate = db.Products.Find(vm.ProductId);
             if (productToUpdate == null)
                 return HttpNotFound();
 
             // Calculate weighted average cost
             decimal totalCurrentCost = productToUpdate.Cost * productToUpdate.QuantityAvailable;
-            decimal totalNewCost = stockEntry.CostPerQty * stockEntry.QuantityAdded;
-            int newQuantity = productToUpdate.QuantityAvailable + stockEntry.QuantityAdded;
+            decimal totalNewCost = vm.CostPerQty * vm.QuantityAdded;
+            int newQuantity = productToUpdate.QuantityAvailable + vm.QuantityAdded;
 
             productToUpdate.Cost = (totalCurrentCost + totalNewCost) / newQuantity;
             productToUpdate.QuantityAvailable = newQuantity;
 
-            // Set audit info (replace with logged in user ID when auth done)
-            stockEntry.DateAdded = DateTime.Now;
-            stockEntry.UserId = (int)Session["UserId"];
+            // Set audit info
+            var stockEntry = new StockEntry
+            {
+                ProductId = vm.ProductId,
+                Supplier = vm.Supplier,
+                CostPerQty = vm.CostPerQty,
+                QuantityAdded = vm.QuantityAdded,
+                DateAdded = DateTime.Now,
+                UserId = (int)Session["UserId"]
+            };
 
             db.StockEntries.Add(stockEntry);
             db.SaveChanges();
 
-            return RedirectToAction("Details", "Products", new { id = stockEntry.ProductId });
+            return RedirectToAction("Details", "Products", new { id = vm.ProductId });
         }
 
-        public ActionResult StockHistory(int productId)
+
+        [RoleAuthorize("Manager")]
+        public ActionResult StockHistory(int? productId)
         {
-            var product = db.Products.Find(productId);
-            if (product == null)
+            var query = db.StockEntries.Include(se => se.Product).Include(se => se.User).AsQueryable();
+
+            if (productId.HasValue)
             {
-                return HttpNotFound();
+                query = query.Where(se => se.ProductId == productId.Value);
             }
 
-            ViewBag.ProductName = product.Name;
-            ViewBag.ProductId = product.ProductId;
+            var stockHistoryList = query.Select(se => new StockHistoryViewModel
+            {
+                DateAdded = se.DateAdded,
+                Supplier = se.Supplier,
+                CostPerQty = se.CostPerQty,
+                QuantityAdded = se.QuantityAdded,
+                ProductName = se.Product.Name,
+                AddedByUsername = se.User.Username
+            }).OrderByDescending(se => se.DateAdded).ToList();
 
-            var stockEntries = db.StockEntries
-                                 .Include(se => se.User) // include user info
-                                 .Where(se => se.ProductId == productId)
-                                 .OrderByDescending(se => se.DateAdded)
-                                 .ToList();
+            if (productId.HasValue)
+            {
+                ViewBag.ProductId = productId.Value;
+                ViewBag.ProductName = db.Products
+                    .Where(p => p.ProductId == productId.Value)
+                    .Select(p => p.Name)
+                    .FirstOrDefault();
+            }
 
-            return View(stockEntries);
+            return View(stockHistoryList);
         }
+
 
 
         protected override void Dispose(bool disposing)

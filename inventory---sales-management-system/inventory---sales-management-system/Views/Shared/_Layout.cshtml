@@ -74,21 +74,27 @@
                         @if (Session["UserRole"]?.ToString() == "Manager")
                         {
                             <li class="nav-item">
+                                <a href="@Url.Action("StockHistory", "Products")" class="nav-link">
+                                    <i class="nav-icon bi bi-clock-history"></i>
+                                    <p>Stock History</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
                                 <a href="@Url.Action("Index", "Categories")" class="nav-link">
                                     <i class="nav-icon bi bi-tag"></i>
                                     <p>Categories</p>
                                 </a>
                             </li>
-                        }
+                            }
 
-                        <li class="nav-item">
-                            <a href="@Url.Action("Index", "Sales")" class="nav-link">
-                                <i class="nav-icon bi bi-cash"></i>
-                                <p>Sales</p>
-                            </a>
-                        </li>
+                            <li class="nav-item">
+                                <a href="@Url.Action("Index", "Sales")" class="nav-link">
+                                    <i class="nav-icon bi bi-cash"></i>
+                                    <p>Sales</p>
+                                </a>
+                            </li>
 
-                    </ul>
+                        </ul>
 
                 </nav>
             </div>

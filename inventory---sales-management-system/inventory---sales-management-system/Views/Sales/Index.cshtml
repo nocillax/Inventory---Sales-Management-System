@@ -1,12 +1,21 @@
-﻿@model IEnumerable<inventory___sales_management_system.Models.Sale>
+﻿@model IEnumerable<inventory___sales_management_system.ViewModels.Sale.SaleHistoryViewModel>
 
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewBag.Title = "Index";
-    var role = Session["UserRole"]?.ToString();
+    var role = Session["UserRole"] as String;
 }
 
-<h2>Index</h2>
+@if (role == "Manager")
+{
+    <h2>Sales History</h2>
+}
+
+@if (role == "SalesPerson")
+{
+    <h2>My Sales History</h2>
+}
+
 
 <p>
     @Html.ActionLink("Create New", "Create")
@@ -16,7 +25,7 @@
         @if (role == "Manager")
         {
             <th>
-                @Html.DisplayNameFor(model => model.User.Username)
+                @Html.DisplayNameFor(model => model.SalesPersonName)
             </th>
         }
         <th>
@@ -39,7 +48,7 @@
             @if (role == "Manager")
             {
                 <td>
-                    @Html.DisplayFor(modelItem => item.User.Username)
+                    @Html.DisplayFor(modelItem => item.SalesPersonName)
                 </td>
             }
             <td>

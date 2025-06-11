@@ -1,8 +1,11 @@
-﻿@model List<inventory___sales_management_system.Models.Product>
+﻿@model inventory___sales_management_system.ViewModels.Sale.CreateSaleViewModel
 
 @{
     ViewBag.Title = "Create Sale";
 }
+
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/css/select2.min.css" rel="stylesheet" />
+
 <h2>Create Sale</h2>
 
 @using (Html.BeginForm())
@@ -10,22 +13,24 @@
     @Html.AntiForgeryToken()
 
     <div>
-        <label>Date</label>
-        <input type="date" name="date" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+        @Html.LabelFor(m => m.Date)
+        @Html.TextBoxFor(m => m.Date, "{0:yyyy-MM-ddTHH:mm}", new { type = "datetime-local", @class = "form-control" })
+
     </div>
 
     <div>
-        <label>Buyer Name</label>
-        <input type="text" name="buyerName" class="form-control" />
+        @Html.LabelFor(m => m.BuyerName)
+        @Html.TextBoxFor(m => m.BuyerName, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.BuyerName)
     </div>
 
     <hr />
 
     <div>
-        <label>Select Product</label>
-        <select id="productSelect" class="form-control">
+        <label for="productSelect">Select Product</label>
+        <select id="productSelect" class="form-control select2">
             <option value="">-- Select Product --</option>
-            @foreach (var p in Model)
+            @foreach (var p in Model.ProductsList)
             {
                 <option value="@p.ProductId" data-price="@p.Price">@p.Name</option>
             }
@@ -33,7 +38,9 @@
 
         <label>Quantity</label>
         <input type="number" id="qtyInput" value="1" min="1" class="form-control" style="width: 100px;" />
-        <button type="button" id="addProductBtn" class="btn btn-primary" style="margin-top:10px;">Add Product</button>
+
+        <button type="button" id="addProductBtn" class="btn btn-primary mt-2">Add Product</button>
+
     </div>
 
     <hr />
@@ -60,16 +67,28 @@
         </tfoot>
     </table>
 
-    <input type="submit" value="Create Sale" class="btn btn-success" style="margin-top:20px;" />
+    <input type="submit" value="Create Sale" class="btn btn-success mt-3" />
 }
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/js/select2.min.js"></script>
 
 @section Scripts {
     <script>
+        $(document).ready(function () {
+            $('#productSelect').select2({
+                placeholder: '-- Select Product --',
+                allowClear: true
+            });
+        });
+
+        // Build products data map from server data
         const productsData = {};
-        @foreach (var p in Model)
+        @foreach (var p in Model.ProductsList)
         {
             <text>productsData[@p.ProductId] = { name: "@p.Name", price: @p.Price };</text>
         }
+
 
         const productsTable = document.getElementById('productsTable');
         const tbody = productsTable.querySelector('tbody');
@@ -80,7 +99,7 @@
         const addedProducts = {};
 
         document.getElementById('addProductBtn').addEventListener('click', function () {
-            const select = document.getElementById('productSelect');
+            const select = productSelect;
             const qtyInput = document.getElementById('qtyInput');
             const productId = select.value;
             const qty = parseInt(qtyInput.value);
@@ -141,6 +160,7 @@
 
             // Reset dropdown and qty input
             select.value = '';
+            productSearch.value = '';
             qtyInput.value = 1;
         });
 

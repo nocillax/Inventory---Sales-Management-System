@@ -1,4 +1,4 @@
-﻿@model inventory___sales_management_system.Models.Sale
+﻿@model inventory___sales_management_system.ViewModels.Sale.SaleDetailsViewModel
 
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -11,8 +11,8 @@
     <h4>Sale Info</h4>
     <hr />
     <dl class="dl-horizontal">
-        <dt>@Html.DisplayNameFor(m => m.User.Username)</dt>
-        <dd>@Html.DisplayFor(m => m.User.Username)</dd>
+        <dt>@Html.DisplayNameFor(m => m.SalesPersonName)</dt>
+        <dd>@Html.DisplayFor(m => m.SalesPersonName)</dd>
 
         <dt>@Html.DisplayNameFor(m => m.Date)</dt>
         <dd>@Html.DisplayFor(m => m.Date)</dd>
@@ -36,10 +36,10 @@
         @foreach (var item in Model.SaleItems)
         {
             <tr>
-                <td>@(item.Product?.Name ?? "N/A")</td>
+                <td>@(item.ProductName ?? "N/A")</td>
                 <td>@item.Quantity</td>
                 <td>@item.PriceAtSale.ToString("C")</td>
-                <td>@((item.Quantity * item.PriceAtSale).ToString("C"))</td>
+                <td>@((item.Subtotal).ToString("C"))</td>
             </tr>
         }
     </tbody>

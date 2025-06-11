@@ -1,4 +1,4 @@
-﻿@model inventory___sales_management_system.Models.Product
+﻿@model inventory___sales_management_system.ViewModels.Product.CreateProductViewModel
 
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -27,7 +27,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.CategoryId, "Category", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.DropDownList("CategoryId", null, htmlAttributes: new { @class = "form-control" })
+                @Html.DropDownListFor(model => model.CategoryId, Model.Categories, "-- Select Category --", new { @class = "form-control" })
                 @Html.ValidationMessageFor(model => model.CategoryId, "", new { @class = "text-danger" })
             </div>
         </div>
