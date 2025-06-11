@@ -7,12 +7,15 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Antlr.Runtime.Tree;
+using inventory___sales_management_system.Attributes;
 using inventory___sales_management_system.Context;
 using inventory___sales_management_system.Models;
 using Rotativa;
+using static inventory___sales_management_system.Models.User;
 
 namespace inventory___sales_management_system.Controllers
 {
+    [RoleAuthorize("Manager", "Salesperson")]
     public class SalesController : Controller
     {
         private ISMSDBContext db = new ISMSDBContext();
@@ -20,9 +23,19 @@ namespace inventory___sales_management_system.Controllers
         // GET: Sales
         public ActionResult Index()
         {
+            var role = Session["UserRole"]?.ToString();
+            var userId = (int)Session["UserId"]; // Assuming UserId is stored as int in session
+
             var sales = db.Sales.Include(s => s.User);
+
+            if (role == "Salesperson")
+            {
+                sales = sales.Where(s => s.UserId == userId);
+            }
+
             return View(sales.ToList());
         }
+
 
         // GET: Sales/Details/5
         public ActionResult Details(int id)
@@ -69,7 +82,7 @@ namespace inventory___sales_management_system.Controllers
                 return View();
             }
 
-            int userId = 2;
+            int userId = (int)Session["UserId"];
 
             var sale = new Sale
             {

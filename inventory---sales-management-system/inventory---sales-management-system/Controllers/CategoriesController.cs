@@ -6,11 +6,13 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using inventory___sales_management_system.Attributes;
 using inventory___sales_management_system.Context;
 using inventory___sales_management_system.Models;
 
 namespace inventory___sales_management_system.Controllers
 {
+    [RoleAuthorize("Manager")]
     public class CategoriesController : Controller
     {
         private ISMSDBContext db = new ISMSDBContext();
@@ -90,31 +92,27 @@ namespace inventory___sales_management_system.Controllers
             return View(category);
         }
 
-        // GET: Categories/Delete/5
-        public ActionResult Delete(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Category category = db.Categories.Find(id);
-            if (category == null)
-            {
-                return HttpNotFound();
-            }
-            return View(category);
-        }
-
-        // POST: Categories/Delete/5
-        [HttpPost, ActionName("Delete")]
+        
+        [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
+        public ActionResult Delete(int id)
         {
-            Category category = db.Categories.Find(id);
+            var category = db.Categories.Find(id);
+            if (category == null) return HttpNotFound();
+
+            var products = db.Products.Where(p => p.CategoryId == id).ToList();
+            foreach (var product in products)
+            {
+                product.CategoryId = null;
+            }
+
             db.Categories.Remove(category);
             db.SaveChanges();
+
+            TempData["DeleteMessage"] = "Category deleted successfully. Products updated.";
             return RedirectToAction("Index");
         }
+
 
         protected override void Dispose(bool disposing)
         {

@@ -11,9 +11,11 @@ namespace inventory___sales_management_system.Models
     {
         public int ProductId { get; set; }
 
+        [Display(Name = "Last Edited")]
         public DateTime DateEdited { get; set; } = DateTime.Now;
 
         [Required]
+        [Display(Name = "Product Name")]
         public string Name { get; set; }
 
         [Required]
@@ -23,15 +25,17 @@ namespace inventory___sales_management_system.Models
         public decimal Cost { get; set; } = 0m;
 
         [Required]
+        [Display(Name = "Quantity Available")]
         public int QuantityAvailable { get; set; } = 0;
 
         [Required]
+        [Display(Name = "Low Stock Threshold")]
         public int LowStockThreshold { get; set; } = 0;
 
+        [Display(Name = "Activity Status")]
         public bool IsActive { get; set; } = false;
 
-        [Required]
-        public int CategoryId { get; set; }
+        public int? CategoryId { get; set; }
 
         public virtual Category Category { get; set; }
 

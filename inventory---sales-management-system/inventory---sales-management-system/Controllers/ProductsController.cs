@@ -6,11 +6,13 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using inventory___sales_management_system.Attributes;
 using inventory___sales_management_system.Context;
 using inventory___sales_management_system.Models;
 
 namespace inventory___sales_management_system.Controllers
 {
+    [RoleAuthorize("Manager", "Salesperson")]
     public class ProductsController : Controller
     {
         private ISMSDBContext db = new ISMSDBContext();
@@ -18,9 +20,17 @@ namespace inventory___sales_management_system.Controllers
         // GET: Products
         public ActionResult Index()
         {
+            var role = Session["UserRole"]?.ToString();
             var products = db.Products.Include(p => p.Category);
+
+            if (role == "Salesperson")
+            {
+                products = products.Where(p => p.IsActive);
+            }
+
             return View(products.ToList());
         }
+
 
         // GET: Products/Details/5
         public ActionResult Details(int? id)
@@ -154,7 +164,7 @@ namespace inventory___sales_management_system.Controllers
 
             // Set audit info (replace with logged in user ID when auth done)
             stockEntry.DateAdded = DateTime.Now;
-            stockEntry.UserId = 2; // TODO: replace with actual user ID
+            stockEntry.UserId = (int)Session["UserId"];
 
             db.StockEntries.Add(stockEntry);
             db.SaveChanges();

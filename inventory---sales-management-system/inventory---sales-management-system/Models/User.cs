@@ -20,7 +20,13 @@ namespace inventory___sales_management_system.Models
         public string PasswordHash { get; set; }
 
         [Required]
-        public string Role { get; set; }
+        public UserRole Role { get; set; }
+
+        public enum UserRole
+        {
+            Manager = 1,
+            Salesperson = 2
+        }
 
         public virtual ICollection<Sale> Sales { get; set; }
     }

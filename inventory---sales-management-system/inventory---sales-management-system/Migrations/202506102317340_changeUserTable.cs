@@ -1,0 +1,18 @@
+﻿namespace inventory___sales_management_system.Migrations
+{
+    using System;
+    using System.Data.Entity.Migrations;
+    
+    public partial class changeUserTable : DbMigration
+    {
+        public override void Up()
+        {
+            AlterColumn("dbo.Users", "Role", c => c.Int(nullable: false));
+        }
+        
+        public override void Down()
+        {
+            AlterColumn("dbo.Users", "Role", c => c.String(nullable: false));
+        }
+    }
+}

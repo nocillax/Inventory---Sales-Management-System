@@ -30,6 +30,7 @@ namespace inventory___sales_management_system.Context
         public DbSet<SaleItem> SaleItems { get; set; }
         public DbSet<StockEntry> StockEntries { get; set; }
 
+
     }
 
     //public class MyEntity

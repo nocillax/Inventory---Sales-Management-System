@@ -13,6 +13,7 @@ namespace inventory___sales_management_system.Models
         public int Quantity { get; set; }
 
         [Required]
+        [Display(Name = "Price at Sale")]
         public decimal PriceAtSale { get; set; }
 
         public int SaleId { get; set; }

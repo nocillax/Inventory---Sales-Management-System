@@ -11,6 +11,7 @@ namespace inventory___sales_management_system.Models
         public int CategoryId { get; set; }
 
         [Required]
+        [Display(Name = "Category Name")]
         public string Name { get; set; }
 
         public virtual ICollection<Product> Products { get; set; }

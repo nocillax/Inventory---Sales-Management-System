@@ -3,6 +3,7 @@
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewBag.Title = "Index";
+    var role = Session["UserRole"]?.ToString();
 }
 
 <h2>Index</h2>
@@ -12,9 +13,12 @@
 </p>
 <table class="table">
     <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.User.Username)
-        </th>
+        @if (role == "Manager")
+        {
+            <th>
+                @Html.DisplayNameFor(model => model.User.Username)
+            </th>
+        }
         <th>
             @Html.DisplayNameFor(model => model.Date)
         </th>
@@ -32,9 +36,12 @@
     @foreach (var item in Model)
     {
         <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.User.Username)
-            </td>
+            @if (role == "Manager")
+            {
+                <td>
+                    @Html.DisplayFor(modelItem => item.User.Username)
+                </td>
+            }
             <td>
                 @Html.DisplayFor(modelItem => item.Date)
             </td>

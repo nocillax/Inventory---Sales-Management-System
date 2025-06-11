@@ -10,21 +10,26 @@ namespace inventory___sales_management_system.Controllers
     {
         public ActionResult Index()
         {
-            return View();
-        }
+            var role = Session["UserRole"] as string;
+            string message;
 
-        public ActionResult About()
-        {
-            ViewBag.Message = "Your application description page.";
+            if (role == "Manager")
+            {
+                message = "I am Manager";
+            }
+            else if (role == "Salesperson")
+            {
+                message = "I am Salesperson";
+            }
+            else
+            {
+                message = "Role not recognized";
+            }
 
-            return View();
-        }
-
-        public ActionResult Contact()
-        {
-            ViewBag.Message = "Your contact page.";
-
+            ViewBag.RoleMessage = message;
             return View();
         }
     }
+
+
 }

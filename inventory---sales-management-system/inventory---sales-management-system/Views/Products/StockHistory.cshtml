@@ -10,12 +10,12 @@
 <table class="table table-bordered table-striped">
     <thead>
         <tr>
-            <th>Date Added</th>
-            <th>Supplier</th>
-            <th>Cost per Unit</th>
-            <th>Quantity Added</th>
-            <th>Total Cost</th>
-            <th>Added By</th>
+            <th>@Html.DisplayNameFor(model => model.First().DateAdded)</th>
+            <th>@Html.DisplayNameFor(model => model.First().Supplier)</th>
+            <th>@Html.DisplayNameFor(model => model.First().CostPerQty)</th>
+            <th>@Html.DisplayNameFor(model => model.First().QuantityAdded)</th>
+            <th>@Html.DisplayNameFor(model => model.First().TotalCost)</th>
+            <th>Added By</th> <!-- No Display attribute on User.Username -->
         </tr>
     </thead>
     <tbody>

@@ -3,13 +3,17 @@
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewBag.Title = "Index";
+    var role = Session["UserRole"]?.ToString();
 }
 
 <h2>Index</h2>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
+@if (role == "Manager")
+{
+    <p>
+        @Html.ActionLink("Create New Product", "Create")
+    </p>
+}
 <table class="table">
     <tr>
         <th>
@@ -26,10 +30,15 @@
         </th>
         <th>
             @Html.DisplayNameFor(model => model.DateEdited)
-        <th>
-            @Html.DisplayNameFor(model => model.IsActive)
         </th>
-        <th></th>
+        @if (role == "Manager")
+        {
+            <th>
+                @Html.DisplayNameFor(model => model.IsActive)
+            </th>
+            <th>
+            </th>
+        }
     </tr>
 
 @foreach (var item in Model) {
@@ -49,14 +58,18 @@
         <td>
             @Html.DisplayFor(modelItem => item.DateEdited)
         </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.IsActive)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id = item.ProductId }) |
-            @Html.ActionLink("Details", "Details", new { id = item.ProductId }) |
-            @Html.ActionLink("Delete", "Delete", new { id = item.ProductId })
-        </td>
+        @if (role == "Manager")
+        {
+            <td>
+                @Html.DisplayFor(modelItem => item.IsActive)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.ProductId }) | 
+                @Html.ActionLink("Delete", "Delete", new { id = item.ProductId }) | 
+                @Html.ActionLink("Details", "Details", new { id = item.ProductId })
+            </td>
+        }
+
     </tr>
 }
 
