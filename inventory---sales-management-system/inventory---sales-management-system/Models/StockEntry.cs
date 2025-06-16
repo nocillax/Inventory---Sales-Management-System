@@ -10,19 +10,26 @@ namespace inventory___sales_management_system.Models
     {
         public int StockEntryId { get; set; }
 
+        [Display(Name = "Product Name")]
         public int ProductId { get; set; }
         public virtual Product Product { get; set; }
 
+        [Display(Name = "Date Added")]
         public DateTime DateAdded { get; set; } = DateTime.Now;
 
+        [Display(Name = "Supplier Name")]
         public string Supplier { get; set; }
 
+        [Display(Name = "Cost per Quantity")]
         public decimal CostPerQty { get; set; }
 
+        [Display(Name = "Quantity Added")]
         public int QuantityAdded { get; set; }
 
+        [Display(Name = "Total Cost")]
         public decimal TotalCost => CostPerQty * QuantityAdded;
 
+        [Display(Name = "Added By")]
         public int UserId { get; set; }
 
         public virtual User User { get; set; }

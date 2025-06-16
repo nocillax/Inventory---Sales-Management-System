@@ -11,15 +11,12 @@ namespace inventory___sales_management_system.ViewModels.Stock
         public int ProductId { get; set; }
 
         [Required]
-        [Display(Name = "Supplier Name")]
         public string Supplier { get; set; }
 
         [Required]
-        [Display(Name = "Cost per Quantity")]
         public decimal CostPerQty { get; set; }
 
         [Required]
-        [Display(Name = "Quantity Added")]
         public int QuantityAdded { get; set; }
     }
 

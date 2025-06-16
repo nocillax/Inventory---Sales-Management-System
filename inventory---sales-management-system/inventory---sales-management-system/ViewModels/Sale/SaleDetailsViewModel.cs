@@ -13,10 +13,8 @@ namespace inventory___sales_management_system.ViewModels.Sale
         [Display(Name = "Salesperson")]
         public string SalesPersonName { get; set; }
 
-        [Display(Name = "Sale Date")]
         public DateTime Date { get; set; }
 
-        [Display(Name = "Buyer Name")]
         public string BuyerName { get; set; }
 
         public List<SaleItemViewModel> SaleItems { get; set; }

@@ -22,6 +22,7 @@ namespace inventory___sales_management_system.Models
         [Display(Name = "Total Amount")]
         public decimal TotalAmount { get; set; }
 
+
         public int UserId { get; set; }
 
         public virtual User User { get; set; }

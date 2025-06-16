@@ -8,11 +8,9 @@ namespace inventory___sales_management_system.ViewModels.Sale
 {
     public class CreateSaleViewModel
     {
-        [Display(Name = "Sale Date")]
         public DateTime Date { get; set; } = DateTime.Now;
 
         [Required(ErrorMessage = "Buyer Name is required")]
-        [Display(Name = "Buyer Name")]
         public string BuyerName { get; set; }
 
         // List of active products for dropdown/search

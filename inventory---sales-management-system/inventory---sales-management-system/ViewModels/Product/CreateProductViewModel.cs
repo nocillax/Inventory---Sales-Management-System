@@ -7,11 +7,9 @@ namespace inventory___sales_management_system.ViewModels.Product
     public class CreateProductViewModel
     {
         [Required(ErrorMessage = "Product Name is required")]
-        [Display(Name = "Product Name")]
         public string Name { get; set; }
 
         [Required(ErrorMessage = "Category is required")]
-        [Display(Name = "Category")]
         public int? CategoryId { get; set; }
 
         public IEnumerable<SelectListItem> Categories { get; set; }

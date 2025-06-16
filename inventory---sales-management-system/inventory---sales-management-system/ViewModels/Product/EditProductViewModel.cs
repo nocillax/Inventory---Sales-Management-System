@@ -9,7 +9,6 @@ namespace inventory___sales_management_system.ViewModels.Product
         public int ProductId { get; set; }
 
         [Required(ErrorMessage = "Product Name is required")]
-        [Display(Name = "Product Name")]
         public string Name { get; set; }
 
         [Required(ErrorMessage = "Price is required")]
@@ -22,19 +21,16 @@ namespace inventory___sales_management_system.ViewModels.Product
 
         [Required(ErrorMessage = "Quantity Available is required")]
         [Range(0, int.MaxValue, ErrorMessage = "Quantity must be non-negative")]
-        [Display(Name = "Quantity Available")]
         public int QuantityAvailable { get; set; }
 
         [Required(ErrorMessage = "Low Stock Threshold is required")]
         [Range(0, int.MaxValue, ErrorMessage = "Low Stock Threshold must be non-negative")]
-        [Display(Name = "Low Stock Threshold")]
         public int LowStockThreshold { get; set; }
 
         [Display(Name = "Activity Status")]
         public bool IsActive { get; set; } = false;
 
         [Required(ErrorMessage = "Category is required")]
-        [Display(Name = "Category")]
         public int? CategoryId { get; set; }
 
         public IEnumerable<SelectListItem> Categories { get; set; }
