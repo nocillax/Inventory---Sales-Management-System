@@ -5,17 +5,28 @@
     ViewBag.Title = "Index";
 }
 
-<h2>Index</h2>
+<style>
+    th.actions-column, td.actions-column {
+        width: 150px; /* or desired fixed width */
+        white-space: nowrap; /* prevent wrapping */
+        text-align: center;
+    }
+</style>
+
+<h2>Categories</h2>
+
 
 <p>
-    @Html.ActionLink("Create New", "Create")
+    @Html.ActionLink("Add Category", "Create", null, new { @class = "btn btn-primary" })
 </p>
-<table class="table">
+
+
+<table class="table ">
     <tr>
         <th>
             @Html.DisplayNameFor(model => model.Name)
         </th>
-        <th></th>
+        <th class="actions-column">Actions</th>
     </tr>
 
     @foreach (var item in Model)
@@ -24,14 +35,19 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { id = item.CategoryId }) |
-                @Html.ActionLink("Details", "Details", new { id = item.CategoryId }) |
-                @using (Html.BeginForm("Delete", "Categories", new { id = item.CategoryId }, FormMethod.Post, new { onsubmit = "return confirmDelete();" }))
-                {
-                    @Html.AntiForgeryToken()
-                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
-                }
+            <td class="actions-column">
+                <div style="display: flex; gap: 10px; align-items: center; justify-content: flex-end">
+                    @Html.ActionLink("Edit", "Edit", new { id = item.CategoryId }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.CategoryId }) |
+                    @using (Html.BeginForm("Delete", "Categories", new { id = item.CategoryId }, FormMethod.Post, new { onsubmit = "return confirmDelete();" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-link p-0 align-baseline" style="color: #dc3545;">
+                            Delete
+                        </button>
+                    }
+
+                </div>
             </td>
         </tr>
     }

@@ -6,12 +6,20 @@
     var role = Session["UserRole"]?.ToString();
 }
 
-<h2>Index</h2>
+<style>
+    th.actions-column, td.actions-column {
+        width: 150px; /* or desired fixed width */
+        white-space: nowrap; /* prevent wrapping */
+        text-align: center;
+    }
+</style>
+
+<h2>All Products</h2>
 
 @if (role == "Manager")
 {
     <p>
-        @Html.ActionLink("Create New Product", "Create")
+        @Html.ActionLink("Add New Product", "Create", null, new { @class = "btn btn-primary" })
     </p>
 }
 <table class="table">
@@ -33,11 +41,11 @@
         </th>
         @if (role == "Manager")
         {
-            <th>
+            <th style="text-align:center">
                 @Html.DisplayNameFor(model => model.IsActive)
             </th>
-            <th>
-            </th>
+
+            <th class="actions-column">Actions</th>
         }
     </tr>
 
@@ -61,17 +69,22 @@
             </td>
             @if (role == "Manager")
             {
-                <td>
+                <td style="text-align:center">
                     @Html.DisplayFor(modelItem => item.IsActive)
                 </td>
-                <td>
-                    @Html.ActionLink("Edit", "Edit", new { id = item.ProductId }) |
-                    @Html.ActionLink("Details", "Details", new { id = item.ProductId }) |
-                    @using (Html.BeginForm("Delete", "Products", new { id = item.ProductId }, FormMethod.Post, new { onsubmit = "return confirmDelete();" }))
-                    {
-                        @Html.AntiForgeryToken()
-                        <button type="submit" class="btn btn-sm btn-danger">Delete</button>
-                    }
+
+                <td class="actions-column">
+                    <div style="display: flex; gap: 10px; align-items: center; justify-content: flex-end">
+                        @Html.ActionLink("Edit", "Edit", new { id = item.ProductId }) |
+                        @Html.ActionLink("Details", "Details", new { id = item.ProductId }) |
+                        @using (Html.BeginForm("Delete", "Products", new { id = item.ProductId }, FormMethod.Post, new { onsubmit = "return confirmDelete();" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-link p-0 align-baseline" style="color: #dc3545;">
+                                Delete
+                            </button>
+                        }
+                    </div>
                 </td>
             }
 
