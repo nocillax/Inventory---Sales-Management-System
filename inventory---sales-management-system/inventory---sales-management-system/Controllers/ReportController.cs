@@ -1,4 +1,5 @@
-﻿using inventory___sales_management_system.Context;
+﻿using inventory___sales_management_system.Attributes;
+using inventory___sales_management_system.Context;
 using inventory___sales_management_system.ViewModels.Report;
 using System;
 using System.Collections.Generic;
@@ -9,6 +10,7 @@ using System.Web.Mvc;
 
 namespace inventory___sales_management_system.Controllers
 {
+    [RoleAuthorize("Manager")]
     public class ReportController : Controller
     {
         private ISMSDBContext db;
@@ -127,6 +129,27 @@ namespace inventory___sales_management_system.Controllers
             return summary;
         }
 
+        private List<TopProductViewModel> GetTopProductsByQuantity(int year, int month)
+        {
+            DateTime start = new DateTime(year, month, 1);
+            DateTime end = start.AddMonths(1);
+
+            var summary = db.SaleItems
+                .Where(si => si.Sale.Date >= start && si.Sale.Date < end)
+                .GroupBy(si => si.Product.Name)
+                .Select(g => new TopProductViewModel
+                {
+                    ProductName = g.Key,
+                    QuantitySold = g.Sum(x => x.Quantity),
+                    TotalRevenue = g.Sum(x => x.Quantity * x.PriceAtSale)
+                })
+                .OrderByDescending(x => x.QuantitySold)
+                .ToList();
+
+            return summary;
+        }
+
+
 
         public ActionResult MonthlySalesSummary(int? year, int? month, string groupBy = "Date", int page = 1 )
         {
@@ -208,6 +231,39 @@ namespace inventory___sales_management_system.Controllers
             return View("ProductStockReport", pagedItems);
         }
 
+        public ActionResult TopProducts(int? year, int? month, int page = 1)
+        {
+            int pageSize = 10;
+            int selectedYear = year ?? DateTime.Now.Year;
+            int selectedMonth = month ?? DateTime.Now.Month;
+
+            // Full list of products sold that month
+            var summary = GetTopProductsByQuantity(selectedYear, selectedMonth);
+
+            // Prepare chart data (top 10)
+            var top10 = summary
+                .OrderByDescending(x => x.QuantitySold)
+                .Take(10)
+                .ToList();
+
+            ViewBag.ChartLabels = top10.Select(x => x.ProductName).ToList();
+            ViewBag.ChartData = top10.Select(x => x.QuantitySold).ToList();
+
+            // Pagination for table
+            var pagedItems = summary
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            ViewBag.Page = page;
+            ViewBag.TotalPages = (int)Math.Ceiling((double)summary.Count / pageSize);
+            ViewBag.Year = selectedYear;
+            ViewBag.Month = selectedMonth;
+
+            return View("TopProducts", pagedItems);
+        }
+
+
 
 
 
@@ -282,19 +338,27 @@ namespace inventory___sales_management_system.Controllers
             };
         }
 
+        public ActionResult GenerateTopProductsPdf(int year, int month)
+        {
+            var summary = GetTopProductsByQuantity(year, month);
 
+            ViewBag.Year = year;
+            ViewBag.Month = month;
 
-
-
-
-
-
-
-
-
-
-
-
+            return new Rotativa.ViewAsPdf("TopProductsPdf", summary)
+            {
+                PageSize = Rotativa.Options.Size.A4,
+                PageOrientation = Rotativa.Options.Orientation.Portrait,
+                CustomSwitches = string.Join(" ", new[]
+                {
+            $"--header-html \"{Url.Action("PdfHeader", "Report", null, Request.Url.Scheme)}\"",
+            "--header-spacing 5",
+            $"--footer-html \"{Url.Action("PdfFooter", "Report", null, Request.Url.Scheme)}\"",
+            "--footer-spacing 10",
+            "--margin-bottom 20mm"
+        })
+            };
+        }
 
 
     }

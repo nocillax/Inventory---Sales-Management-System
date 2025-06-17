@@ -1,0 +1,123 @@
+﻿@model List<inventory___sales_management_system.ViewModels.Report.TopProductViewModel>
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    ViewBag.Title = "Top-Selling Products";
+    int page = ViewBag.Page ?? 1;
+    int month = ViewBag.Month;
+    int year = ViewBag.Year;
+    string monthName = new DateTime(year, month, 1).ToString("MMMM yyyy");
+}
+
+<h2 class="mb-4 text-primary font-weight-bold">Top-Selling Products – @monthName</h2>
+
+<div class="text-right mb-2">
+    <a class="btn btn-success"
+       href="@Url.Action("GenerateTopProductsPdf", "Report", new { year = year, month = month })"
+       target="_blank">
+        <i class="fas fa-file-pdf"></i> Generate PDF
+    </a>
+</div>
+
+<div style="height: 400px;">
+    <canvas id="topProductsChart"></canvas>
+</div>
+
+<div class="text-center mt-4">
+    <a class="btn btn-outline-secondary mr-2"
+       href="@Url.Action("TopProducts", new { month = (month == 1 ? 12 : month - 1), year = (month == 1 ? year - 1 : year), page = 1 })">
+        ← Prev
+    </a>
+
+    @monthName
+
+    <a class="btn btn-outline-secondary ml-2"
+       href="@Url.Action("TopProducts", new { month = (month == 12 ? 1 : month + 1), year = (month == 12 ? year + 1 : year), page = 1 })">
+        Next →
+    </a>
+</div>
+
+    <table class="table mt-5">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Quantity Sold</th>
+                <th>Total Revenue ($)</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (!Model.Any())
+            {
+                <tr><td colspan="3">No sales data found for this month.</td></tr>
+            }
+            else
+            {
+                foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.ProductName</td>
+                        <td>@item.QuantitySold</td>
+                        <td>@item.TotalRevenue.ToString("F2")</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+
+    @if (ViewBag.TotalPages > 1)
+    {
+        <nav>
+            <ul class="pagination justify-content-center mt-4">
+                @for (int i = 1; i <= ViewBag.TotalPages; i++)
+                {
+                    <li class="page-item @(i == page ? "active" : "")">
+                        <a class="page-link" href="@Url.Action("TopProducts", new {
+                        page = i,
+                        year = ViewBag.Year,
+                        month = ViewBag.Month
+                    })">@i</a>
+                </li>
+            }
+            </ul>
+        </nav>
+    }
+
+    @section Scripts {
+        <script>
+        $(document).ready(function () {
+            var labels = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.ChartLabels));
+            var data = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.ChartData));
+
+            var ctx = document.getElementById('topProductsChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Quantity Sold',
+                        data: data,
+                        backgroundColor: 'rgba(78, 115, 223, 0.5)',
+                        borderColor: 'rgba(78, 115, 223, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    scales: {
+                        x: {
+                            beginAtZero: true
+                        },
+                        y: {
+                            ticks: {
+                                autoSkip: false
+                            }
+                        }
+                    }
+                }
+            });
+        });
+        </script>
+    }

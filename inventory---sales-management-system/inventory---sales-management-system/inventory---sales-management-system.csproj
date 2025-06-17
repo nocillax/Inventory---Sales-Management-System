@@ -189,6 +189,7 @@
     <Compile Include="ViewModels\Product\EditProductViewModel.cs" />
     <Compile Include="ViewModels\Report\ProductStockViewModel.cs" />
     <Compile Include="ViewModels\Report\SalesSummaryViewModel.cs" />
+    <Compile Include="ViewModels\Report\TopProductViewModel.cs" />
     <Compile Include="ViewModels\Sale\CreateSaleViewModel.cs" />
     <Compile Include="ViewModels\Sale\SaleDetailsViewModel.cs" />
     <Compile Include="ViewModels\Sale\SaleHistoryViewModel.cs" />
@@ -904,6 +905,8 @@
     <Content Include="Views\Shared\_PdfFooter.cshtml" />
     <Content Include="Views\Report\ProductStockReport.cshtml" />
     <Content Include="Views\Report\ProductStockReportPdf.cshtml" />
+    <Content Include="Views\Report\TopProducts.cshtml" />
+    <Content Include="Views\Report\TopProductsPdf.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

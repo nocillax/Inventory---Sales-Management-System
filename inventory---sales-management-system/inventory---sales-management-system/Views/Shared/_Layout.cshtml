@@ -155,15 +155,13 @@
                     <div id="collapseUsers" class="collapse" aria-labelledby="headingUsers"
                          data-parent="#accordionSidebar">
                         <div class="bg-white py-2 collapse-inner rounded">
-                            @*<h6 class="collapse-header">Custom Utilities:</h6>*@
+                            @*<h6 class="collapse-header">Custom Utilities</h6>*@
                             <a class="collapse-item" href="@Url.Action("Index", "Users")">All Users</a>
                             <a class="collapse-item" href="@Url.Action("Create", "Users")">Add User</a>
                         </div>
                     </div>
                 </li>
 
-
-                <hr class="sidebar-divider">
 
                 <!-- Nav Item - Reports Collapse Menu -->
                 <li class="nav-item">
@@ -172,16 +170,27 @@
                         <i class="fas fa-chart-bar"></i>
                         <span>Reports</span>
                     </a>
-                    <div id="collapseReports" class="collapse" aria-labelledby="headingReports"
-                         data-parent="#accordionSidebar">
+                    <div id="collapseReports" class="collapse" aria-labelledby="headingReports" data-parent="#accordionSidebar">
                         <div class="bg-white py-2 collapse-inner rounded">
-                            @*<h6 class="collapse-header">Custom Utilities:</h6>*@
-                            <a class="collapse-item" href="@Url.Action("MonthlySalesSummary", "Report")">Sales Summary</a>
-                            <a class="collapse-item" href="@Url.Action("ProductStockReport", "Report")">Stock Summary</a>
-        @*<a class="collapse-item" href="@Url.Action("SalesByCategory", "Report")">Sales Summary</a>*@
+
+                            <h6 class="collapse-header">Sales Summary</h6>
+                            <a class="collapse-item" href="@Url.Action("MonthlySalesSummary", "Report", new { groupBy = "Date" })">By Date</a>
+                            <a class="collapse-item" href="@Url.Action("MonthlySalesSummary", "Report", new { groupBy = "User" })">By Salesperson</a>
+                            <a class="collapse-item" href="@Url.Action("MonthlySalesSummary", "Report", new { groupBy = "Category" })">By Category</a>
+                            <a class="collapse-item" href="@Url.Action("MonthlySalesSummary", "Report", new { groupBy = "Product" })">By Product</a>
+                            <div class="dropdown-divider"></div>
+
+                            <h6 class="collapse-header">Top Products</h6>
+                            <a class="collapse-item" href="@Url.Action("TopProducts", "Report")">By Quantity Sold</a>
+                            <div class="dropdown-divider"></div>
+
+                            <h6 class="collapse-header">Stock Summary</h6>
+                            <a class="collapse-item" href="@Url.Action("ProductStockReport", "Report", new { lowStockOnly = false })">All Active Products</a>
+                            <a class="collapse-item" href="@Url.Action("ProductStockReport", "Report", new { lowStockOnly = true })">Low Stock Only</a>
                         </div>
                     </div>
                 </li>
+
 
             }
 
