@@ -1,0 +1,70 @@
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 11px;
+            margin: 0;
+            padding: 0;
+        }
+
+        .header-line {
+            border-top: 1px solid #ccc;
+            margin-top: 5px;
+        }
+
+        .header-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+            .header-table td {
+                vertical-align: middle;
+                padding: 5px 10px;
+            }
+
+        .header-left {
+            width: 20%;
+        }
+
+        .header-center {
+            text-align: center;
+            width: 60%;
+        }
+
+            .header-center h2 {
+                margin: 0;
+                font-size: 18px;
+            }
+
+            .header-center p {
+                margin: 0;
+                font-size: 12px;
+            }
+
+        .header-right {
+            width: 20%;
+        }
+    </style>
+</head>
+<body>
+    <table class="header-table">
+        <tr>
+            <td class="header-left">
+                <img src="@Url.Content("~/Logo/NX logo.png")" alt="Logo" style="height: 40px;" />
+            </td>
+            <td class="header-center">
+                <h2>Nocillax</h2>
+                <p>American International University-Bangladesh</p>
+            </td>
+            <td class="header-right"><!-- Empty spacer --></td>
+        </tr>
+    </table>
+    <div class="header-line"></div>
+</body>
+</html>

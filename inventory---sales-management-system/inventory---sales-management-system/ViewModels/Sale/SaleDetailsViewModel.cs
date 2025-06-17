@@ -19,13 +19,13 @@ namespace inventory___sales_management_system.ViewModels.Sale
 
         public List<SaleItemViewModel> SaleItems { get; set; }
 
-        [Display(Name = "Total Amount")]
+        [Display(Name = "Total")]
         public decimal TotalAmount { get; set; }
     }
 
     public class SaleItemViewModel
     {
-        [Display(Name = "Product Name")]
+        [Display(Name = "Product")]
         public string ProductName { get; set; }
 
         public int Quantity { get; set; }

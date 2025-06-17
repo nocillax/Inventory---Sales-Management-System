@@ -146,7 +146,7 @@ namespace inventory___sales_management_system.Controllers
             TempData["SaleCreated"] = true;
             TempData["SaleId"] = sale.SaleId;
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Details", new { id = sale.SaleId });
         }
 
         public ActionResult Invoice(int id)
@@ -156,12 +156,29 @@ namespace inventory___sales_management_system.Controllers
                          .Include(s => s.SaleItems.Select(si => si.Product))
                          .FirstOrDefault(s => s.SaleId == id);
 
-            return new ViewAsPdf("Invoice", sale)
+            return new Rotativa.ViewAsPdf("Invoice", sale)
             {
                 //FileName = $"Invoice_{sale.SaleId}.pdf",
                 PageSize = Rotativa.Options.Size.A4,
-                PageOrientation = Rotativa.Options.Orientation.Portrait
+                PageOrientation = Rotativa.Options.Orientation.Portrait,
+                CustomSwitches = string.Join(" ", new[]
+                {
+                    $"--header-html \"{Url.Action("PdfHeader", "Report", null, Request.Url.Scheme)}\"",
+                    "--header-spacing 5",
+                    $"--footer-html \"{Url.Action("PdfFooter", "Report", null, Request.Url.Scheme)}\"",
+                    "--footer-spacing 10"
+                })
             };
+        }
+
+        public ActionResult PdfHeader()
+        {
+            return View("_PdfHeader");
+        }
+
+        public ActionResult PdfFooter()
+        {
+            return View("_PdfFooter");
         }
 
         protected override void Dispose(bool disposing)

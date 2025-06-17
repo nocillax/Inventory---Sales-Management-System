@@ -1,0 +1,85 @@
+﻿@model List<inventory___sales_management_system.ViewModels.Report.ProductStockViewModel>
+@{
+    Layout = null;
+    bool lowStockOnly = ViewBag.LowStockOnly ?? false;
+    string title = lowStockOnly ? "Low Stock Report" : "Full Product Stock Report";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>@title</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 11px;
+            margin: 20px;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            page-break-inside: auto;
+        }
+        tr {
+            page-break-inside: avoid;
+            page-break-after: auto;
+        }
+
+        th, td {
+            border: 1px solid #999;
+            padding: 6px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tbody tr:first-child td {
+            padding-top: 10px;
+        }
+
+    </style>
+</head>
+<body>
+    <h2>@title</h2>
+    <table>
+        <thead style="display: table-header-group;">
+            <tr>
+                <th>Product Name</th>
+                <th>Quantity Available</th>
+                <th>Low Stock Threshold</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (!Model.Any())
+            {
+                <tr><td colspan="3">No products to display.</td></tr>
+            }
+            else
+            {
+                foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.ProductName</td>
+                        <td>@item.QuantityAvailable</td>
+                        <td>@item.LowStockThreshold</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</body>
+</html>

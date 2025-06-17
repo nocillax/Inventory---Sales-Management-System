@@ -14,7 +14,7 @@
     }
 </style>
 
-<h2>All Products</h2>
+<h2 class="mb-4 text-primary" style="font-weight: bold">All Products</h2>
 
 @if (role == "Manager")
 {
@@ -70,7 +70,14 @@
             @if (role == "Manager")
             {
                 <td style="text-align:center">
-                    @Html.DisplayFor(modelItem => item.IsActive)
+                    @if (item.IsActive)
+                    {
+                        <span style="color:green; font-weight:bold;">Active</span>
+                    }
+                    else
+                    {
+                        <span style="color:red; font-weight:bold;">Inactive</span>
+                    }
                 </td>
 
                 <td class="actions-column">

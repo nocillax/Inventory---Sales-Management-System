@@ -11,19 +11,19 @@ namespace inventory___sales_management_system.ViewModels.Stock
         [Display(Name = "Date Added")]
         public DateTime DateAdded { get; set; }
 
-        [Display(Name = "Supplier Name")]
+        [Display(Name = "Supplier")]
         public string Supplier { get; set; }
 
-        [Display(Name = "Cost per Quantity")]
+        [Display(Name = "Cost per Qty")]
         public decimal CostPerQty { get; set; }
 
-        [Display(Name = "Quantity Added")]
+        [Display(Name = "Qty Added")]
         public int QuantityAdded { get; set; }
 
         [Display(Name = "Total Cost")]
         public decimal TotalCost => CostPerQty * QuantityAdded;
 
-        [Display(Name = "Product Name")]
+        [Display(Name = "Product")]
         public string ProductName { get; set; }
 
         [Display(Name = "Added By")]

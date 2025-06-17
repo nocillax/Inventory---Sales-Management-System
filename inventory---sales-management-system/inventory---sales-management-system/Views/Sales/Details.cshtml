@@ -5,7 +5,7 @@
     ViewBag.Title = "Sale Details";
 }
 
-<h2>Sale Details</h2>
+<h2 class="mb-4 text-primary" style="font-weight: bold">Sale Details</h2>
 
 <div>
     <h4>Sale Info</h4>
@@ -51,10 +51,16 @@
     </tfoot>
 </table>
 
-<p>
-    @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-secondary" })
-</p>
-<p>
-    @Html.ActionLink("Generate Invoice", "Invoice", new { id = Model.SaleId }, new { @class = "btn btn-primary" })
-</p>
+<div style="display: flex; justify-content:space-between">
+    <a class="btn btn-secondary" href="@Url.Action("Index", "Sales")">
+        Back to List
+    </a>
+
+
+    <a class="btn btn-success" target="_blank" href="@Url.Action("Invoice", "Sales", new { id = Model.SaleId })">
+        <i class="fas fa-file-pdf"></i> Generate Invoice
+    </a>
+</div>
+
+
 

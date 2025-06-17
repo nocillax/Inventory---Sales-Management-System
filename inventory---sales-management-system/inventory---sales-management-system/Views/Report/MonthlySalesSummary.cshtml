@@ -1,0 +1,154 @@
+﻿@model List<inventory___sales_management_system.ViewModels.Report.SalesSummaryViewModel>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    ViewBag.Title = "Sales By Date";
+    var page = ViewBag.Page ?? 1;
+    var groupBy = ViewBag.GroupBy as string;
+    int month = ViewBag.Month;
+    int year = ViewBag.Year;
+    string monthName = new DateTime(year, month, 1).ToString("MMMM yyyy");
+
+    string labelX = groupBy == "User" ? "Salesperson"
+            : groupBy == "Category" ? "Category"
+            : groupBy == "Product" ? "Product"
+            : "Date";
+
+    string title = groupBy == "User" ? "Sales by Salesperson"
+                : groupBy == "Category" ? "Sales by Category"
+                : groupBy == "Product" ? "Sales by Product"
+                : "Sales by Date";
+
+}
+
+<h2 class="mb-4 text-primary" style="font-weight: bold">Sales Summary – @monthName</h2>
+
+<form method="get" class="form-inline mb-3">
+    <input type="hidden" name="year" value="@year" />
+    <input type="hidden" name="month" value="@month" />
+    <label for="groupBy" class="mr-2">Group By:</label>
+    <select id="groupBy" name="groupBy" class="form-control" onchange="this.form.submit()">
+        <option value="Date" @(groupBy == "Date" ? "selected" : "")>Date</option>
+        <option value="User" @(groupBy == "User" ? "selected" : "")>Salesperson</option>
+        <option value="Category" @(groupBy == "Category" ? "selected" : "")>Category</option>
+        <option value="Product" @(groupBy == "Product" ? "selected" : "")>Product</option>
+    </select>
+
+</form>
+
+<div class="text-right mb-2">
+    <a class="btn btn-success" target="_blank" href="@Url.Action("GenerateMonthlySummaryPdf", "Report", new { year = year, month = month, groupBy = labelX, page = 1 })">
+        <i class="fas fa-file-pdf"></i> Generate PDF
+    </a>
+</div>
+
+
+<div style="height: 400px;">
+    <canvas id="salesChart"></canvas>
+</div>
+
+<div class="text-center mt-4">
+    <a class="btn btn-outline-secondary mr-2"
+       href="@Url.Action("MonthlySalesSummary", new {
+       month = (month == 1 ? 12 : month - 1),
+       year = (month == 1 ? year - 1 : year),
+       groupBy = groupBy
+   })">
+        ← Prev
+    </a>
+
+    <a class="btn btn-outline-secondary ml-2"
+       href="@Url.Action("MonthlySalesSummary", new {
+       month = (month == 12 ? 1 : month + 1),
+       year = (month == 12 ? year + 1 : year),
+       groupBy = groupBy
+   })">
+        Next →
+    </a>
+</div>
+
+
+<table class="table mt-5">
+    <thead>
+        <tr>
+            <th>@labelX</th>
+            <th>Total Sales ($)</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.All(m => m.TotalSales == 0))
+        {
+            <tr><td colspan="2">No sales data found for this month.</td></tr>
+        }
+        else
+        {
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.GroupLabel</td>
+                    <td>@item.TotalSales.ToString("F2")</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+@if (ViewBag.TotalPages > 1)
+{
+    <nav>
+        <ul class="pagination justify-content-center mt-4">
+            @for (int i = 1; i <= ViewBag.TotalPages; i++)
+            {
+                <li class="page-item @(i == ViewBag.Page ? "active" : "")">
+                    <a class="page-link" href="@Url.Action("MonthlySalesSummary", new {
+                        page = i,
+                        year = ViewBag.Year,
+                        month = ViewBag.Month,
+                        groupBy = ViewBag.GroupBy
+                    })">@i</a>
+                </li>
+            }
+        </ul>
+    </nav>
+}
+
+@section Scripts {
+    <script>
+    $(document).ready(function () {
+        var labels = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.ChartLabels));
+        var data = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.ChartData));
+        var groupBy = "@ViewBag.GroupBy";
+
+        var ctx = document.getElementById('salesChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Total Sales ($)',
+                    data: data,
+                    backgroundColor: 'rgba(78, 115, 223, 0.5)',
+                    borderColor: 'rgba(78, 115, 223, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: groupBy === "Date" ? "x" : "y",
+                scales: {
+                    x: { beginAtZero: true },
+                    y: {
+                        ticks: {
+                            autoSkip: false,
+                            maxRotation: 0,
+                            minRotation: 0
+                        }
+                    }
+                }
+            }
+        });
+    });
+    </script>
+}
+

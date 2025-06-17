@@ -5,15 +5,25 @@
     ViewBag.Title = "Users List";
 }
 
-<h2>Users</h2>
+<style>
+    th.actions-column, td.actions-column {
+        width: 150px; /* or desired fixed width */
+        white-space: nowrap; /* prevent wrapping */
+        text-align: center;
+    }
+</style>
 
-<table class="table table-bordered table-striped">
+<h2 class="mb-4 text-primary" style="font-weight: bold">All Users</h2>
+
+<p>@Html.ActionLink("Create New User", "Create", "Users", null, new { @class = "btn btn-primary" })</p>
+
+<table class="table">
     <thead>
         <tr>
             <th>Username</th>
             <th>Email</th>
             <th>Role</th>
-            <th>Actions</th>
+            <th class="actions-column">Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -23,21 +33,27 @@
                 <td>@user.Username</td>
                 <td>@user.Email</td>
                 <td>@user.Role.ToString()</td>
-                <td>
-                    @Html.ActionLink("Edit", "Edit", new { id = user.UserId }, new { @class = "btn btn-sm btn-primary" })
 
-                    @using (Html.BeginForm("Delete", "Users", new { id = user.UserId }, FormMethod.Post, new { onsubmit = "return confirmDelete();" }))
-                    {
-                        @Html.AntiForgeryToken()
-                        <button type="submit" class="btn btn-sm btn-danger">Delete</button>
-                    }
+                <td class="actions-column">
+                    <div style="display: flex; gap: 10px; align-items: center; justify-content: flex-end">
+
+                        @Html.ActionLink("Edit", "Edit", new { id = user.UserId }) |
+
+                        @using (Html.BeginForm("Delete", "Users", new { id = user.UserId }, FormMethod.Post, new { onsubmit = "return confirmDelete();" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-link p-0 align-baseline" style="color: #dc3545;">
+                                Delete
+                            </button>
+                        }
+
+                    </div>
                 </td>
             </tr>
         }
     </tbody>
 </table>
 
-@Html.ActionLink("Create New User", "Create", "Users", null, new { @class = "btn btn-success" })
 
 @section Scripts {
     <script>

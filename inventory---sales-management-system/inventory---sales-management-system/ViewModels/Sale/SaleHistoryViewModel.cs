@@ -13,13 +13,13 @@ namespace inventory___sales_management_system.ViewModels.Sale
         [Display(Name = "Sale Date")]
         public DateTime Date { get; set; }
 
-        [Display(Name = "Sales Person")]
+        [Display(Name = "Salesperson")]
         public string SalesPersonName { get; set; }
 
-        [Display(Name = "Buyer Name")]
+        [Display(Name = "Buyer")]
         public string BuyerName { get; set; }
 
-        [Display(Name = "Total Amount")]
+        [Display(Name = "Total")]
         public decimal TotalAmount { get; set; }
     }
 }

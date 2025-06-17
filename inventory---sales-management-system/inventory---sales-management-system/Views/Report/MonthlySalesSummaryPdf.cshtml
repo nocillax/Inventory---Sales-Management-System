@@ -1,0 +1,96 @@
+﻿@model List<inventory___sales_management_system.ViewModels.Report.SalesSummaryViewModel>
+@{
+    Layout = null;
+    int month = ViewBag.Month;
+    int year = ViewBag.Year;
+    string groupBy = ViewBag.GroupBy as string ?? "Date";
+    string monthName = new DateTime(year, month, 1).ToString("MMMM yyyy");
+
+    string label = groupBy == "User" ? "Salesperson"
+                : groupBy == "Category" ? "Category"
+                : groupBy == "Product" ? "Product"
+                : "Date";
+
+    string title = groupBy == "User" ? "Sales by Salesperson"
+                : groupBy == "Category" ? "Sales by Category"
+                : groupBy == "Product" ? "Sales by Product"
+                : "Sales by Date";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>@title – @monthName</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 11px;
+            margin: 20px;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            page-break-inside: auto;
+        }
+
+        tr {
+            page-break-inside: avoid;
+            page-break-after: auto;
+        }
+
+        th, td {
+            border: 1px solid #999;
+            padding: 6px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tbody tr:first-child td {
+            padding-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h2>@title – @monthName</h2>
+    <table>
+        <thead style="display: table-header-group;">
+            <tr>
+                <th>@label</th>
+                <th>Total Sales ($)</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.All(m => m.TotalSales == 0))
+            {
+                <tr><td colspan="2">No sales data found for this month.</td></tr>
+            }
+            else
+            {
+                foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.GroupLabel</td>
+                        <td>@item.TotalSales.ToString("F2")</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+
+</body>
+</html>

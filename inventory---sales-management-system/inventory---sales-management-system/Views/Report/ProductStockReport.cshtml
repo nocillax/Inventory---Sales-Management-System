@@ -1,0 +1,75 @@
+﻿@model List<inventory___sales_management_system.ViewModels.Report.ProductStockViewModel>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Product Stock Report";
+
+    bool lowStockOnly = ViewBag.LowStockOnly ?? false;
+    int page = ViewBag.Page ?? 1;
+    int totalPages = ViewBag.TotalPages;
+    string label = lowStockOnly ? "Low Stock Products" : "All Active Products";
+}
+
+<h2 class="mb-4 text-primary font-weight-bold">@label</h2>
+
+<div class="d-flex justify-content-between mb-3">
+    <form method="get" asp-action="ProductStockReport">
+        <input type="hidden" name="page" value="1" />
+        <label>Show:</label>
+        <select name="lowStockOnly" class="form-control d-inline w-auto ml-2" onchange="this.form.submit()">
+            <option value="false" @(lowStockOnly ? "" : "selected")>All Products</option>
+            <option value="true" @(lowStockOnly ? "selected" : "")>Low Stock Only</option>
+        </select>
+    </form>
+
+    <div>
+        <a class="btn btn-success"
+           href="@Url.Action("GenerateProductStockPdf", "Report", new { lowStockOnly = lowStockOnly })"
+           target="_blank">
+            <i class="fas fa-file-pdf"></i> Generate PDF
+        </a>
+    </div>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Product Name</th>
+            <th>Quantity Available</th>
+            <th>Low Stock Threshold</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (!Model.Any())
+        {
+            <tr><td colspan="3">No products to display.</td></tr>
+        }
+        else
+        {
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.ProductName</td>
+                    <td>@item.QuantityAvailable</td>
+                    <td>@item.LowStockThreshold</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+@if (totalPages > 1)
+{
+    <nav>
+        <ul class="pagination justify-content-center">
+            @for (int i = 1; i <= totalPages; i++)
+            {
+                <li class="page-item @(i == page ? "active" : "")">
+                    <a class="page-link"
+                       href="@Url.Action("ProductStockReport", new { page = i, lowStockOnly = lowStockOnly })">
+                        @i
+                    </a>
+                </li>
+            }
+        </ul>
+    </nav>
+}

@@ -11,15 +11,15 @@ namespace inventory___sales_management_system.Models
     {
         public int SaleId { get; set; }
 
-        [Display(Name = "Sale Date")]
+        [Display(Name = "Date")]
         public DateTime Date { get; set; } = DateTime.Now;
 
         [Required]
-        [Display(Name = "Buyer Name")]
+        [Display(Name = "Buyer")]
         public string BuyerName { get; set; }
 
         [Required]
-        [Display(Name = "Total Amount")]
+        [Display(Name = "Total")]
         public decimal TotalAmount { get; set; }
 
 
