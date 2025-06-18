@@ -28,7 +28,9 @@
         <tr>
             <th>Product Name</th>
             <th>Quantity</th>
-            <th>Price at Sale</th>
+            <th>Regular Price</th>
+            <th>Discount</th>
+            <th>Price</th>
             <th>Subtotal</th>
         </tr>
     </thead>
@@ -38,18 +40,21 @@
             <tr>
                 <td>@(item.ProductName ?? "N/A")</td>
                 <td>@item.Quantity</td>
+                <td>@item.RegularPrice.ToString("C")</td>
+                <td>@(item.DiscountPercent.HasValue ? item.DiscountPercent.Value.ToString("F2") + "%" : "-")</td>
                 <td>@item.PriceAtSale.ToString("C")</td>
-                <td>@((item.Subtotal).ToString("C"))</td>
+                <td>@item.Subtotal.ToString("C")</td>
             </tr>
         }
     </tbody>
     <tfoot>
         <tr>
-            <td colspan="3" class="text-right"><strong>Total:</strong></td>
+            <td colspan="5" class="text-right"><strong>Total:</strong></td>
             <td><strong>@Model.TotalAmount.ToString("C")</strong></td>
         </tr>
     </tfoot>
 </table>
+
 
 <div style="display: flex; justify-content:space-between">
     <a class="btn btn-secondary" href="@Url.Action("Index", "Sales")">

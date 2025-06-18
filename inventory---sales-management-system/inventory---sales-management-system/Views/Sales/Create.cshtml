@@ -48,9 +48,11 @@
             <tr>
                 <th>Product Name</th>
                 <th>Quantity</th>
+                <th>Regular Price</th>
+                <th>Discount</th>
                 <th>Price</th>
                 <th>Subtotal</th>
-                <th>Action</th>
+                
             </tr>
         </thead>
         <tbody>
@@ -71,8 +73,6 @@
 
 
 
-
-
 @section Scripts {
     <script>
         $(document).ready(function () {
@@ -82,20 +82,24 @@
             });
         });
 
-        // Build products data map from server data
-        const productsData = {};
-        @foreach (var p in Model.ProductsList)
-        {
-            <text>productsData[@p.ProductId] = { name: "@p.Name", price: @p.Price };</text>
-        }
-
+        // Product map from server
+        const productsData = {
+            @foreach (var p in Model.ProductsList)
+            {
+                <text>
+                @p.ProductId: {
+                    name: "@p.Name",
+                    price: @p.Price,
+                    isOnSale: @(p.IsOnSale.ToString().ToLower()),
+                    discount: @(p.DiscountPercent ?? 0)
+                },
+                </text>
+            }
+        };
 
         const productsTable = document.getElementById('productsTable');
         const tbody = productsTable.querySelector('tbody');
         const totalAmountSpan = document.getElementById('totalAmount');
-        let totalAmount = 0;
-
-        // Keep track of added products to prevent duplicates
         const addedProducts = {};
 
         document.getElementById('addProductBtn').addEventListener('click', function () {
@@ -104,73 +108,70 @@
             const productId = select.value;
             const qty = parseInt(qtyInput.value);
 
-            if (!productId) {
-                alert('Please select a product');
-                return;
-            }
-            if (qty < 1 || isNaN(qty)) {
-                alert('Please enter a valid quantity');
-                return;
-            }
-            if (addedProducts[productId]) {
-                alert('Product already added');
-                return;
-            }
+            if (!productId) return alert('Please select a product');
+            if (isNaN(qty) || qty < 1) return alert('Enter a valid quantity');
+            if (addedProducts[productId]) return alert('Product already added');
 
             const product = productsData[productId];
+            const regularPrice = product.price;
+            const discount = product.isOnSale ? product.discount : 0;
+            const priceAtSale = regularPrice * (1 - discount / 100);
+            const subtotal = priceAtSale * qty;
 
-            // Create new row
             const tr = document.createElement('tr');
-
             tr.innerHTML = `
                 <td>${product.name}<input type="hidden" name="productIds" value="${productId}" /></td>
                 <td><input type="number" name="quantities" value="${qty}" min="1" class="form-control qtyInput" style="width:80px;" /></td>
-                <td>${product.price.toFixed(2)}</td>
-                <td class="subtotal">${(product.price * qty).toFixed(2)}</td>
-                <td><button type="button" class="btn btn-danger btn-sm removeBtn">Remove</button></td>
+                <td>${regularPrice.toFixed(2)}</td>
+                <td>${discount > 0 ? discount.toFixed(2) + "%" : "-"}</td>
+                <td>${priceAtSale.toFixed(2)}</td>
+                <td class="subtotal">${subtotal.toFixed(2)}</td>
+                <td><button type="button" class="btn btn-link text-danger p-0 removeBtn" title="Remove"><i class="fas fa-times"></i></button></td>
             `;
 
             tbody.appendChild(tr);
             productsTable.style.display = '';
-            addedProducts[productId] = true;
+            addedProducts[productId] = { row: tr, priceAtSale, discount, regularPrice };
 
             updateTotal();
 
-            // Handle quantity change to update subtotal and total
+            // Quantity change handler
             tr.querySelector('.qtyInput').addEventListener('input', function (e) {
                 let val = parseInt(e.target.value);
-                if (isNaN(val) || val < 1) {
-                    val = 1;
-                    e.target.value = val;
-                }
-                const subtotalCell = tr.querySelector('.subtotal');
-                subtotalCell.textContent = (product.price * val).toFixed(2);
+                if (isNaN(val) || val < 1) val = 1;
+                e.target.value = val;
+
+                const newSubtotal = val * addedProducts[productId].priceAtSale;
+                tr.querySelector('.subtotal').textContent = newSubtotal.toFixed(2);
                 updateTotal();
             });
 
-            // Handle remove button
+            // Remove button handler
             tr.querySelector('.removeBtn').addEventListener('click', function () {
-                delete addedProducts[productId];
                 tr.remove();
-                if (tbody.children.length === 0) {
-                    productsTable.style.display = 'none';
-                }
+                delete addedProducts[productId];
+                if (tbody.children.length === 0) productsTable.style.display = 'none';
                 updateTotal();
             });
 
-            // Reset dropdown and qty input
+            // Reset fields
             select.value = '';
             productSearch.value = '';
             qtyInput.value = 1;
         });
 
         function updateTotal() {
-            totalAmount = 0;
-            tbody.querySelectorAll('tr').forEach(row => {
-                const subtotal = parseFloat(row.querySelector('.subtotal').textContent);
-                totalAmount += subtotal;
+            let total = 0;
+            tbody.querySelectorAll('.subtotal').forEach(cell => {
+                total += parseFloat(cell.textContent);
             });
-            totalAmountSpan.textContent = totalAmount.toFixed(2);
+            totalAmountSpan.textContent = total.toFixed(2);
         }
     </script>
 }
+
+
+
+
+
+

@@ -1,0 +1,194 @@
+﻿@model inventory___sales_management_system.ViewModels.Dashboard.DashboardViewModel
+@{
+    ViewBag.Title = "Manager Dashboard";
+}
+
+@*Top Cards*@
+
+<div class="row">
+    <div class="col-md-3 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Today’s Sales</div>
+                <div class="h5 mb-0 font-weight-bold text-gray-800">$@Model.TodaysSales.ToString("N2")</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-4">
+        <div class="card border-left-warning shadow h-100 py-2">
+            <div class="card-body">
+                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Low Stock</div>
+                <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.LowStockCount</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-4">
+        <div class="card border-left-danger shadow h-100 py-2">
+            <div class="card-body">
+                <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Dead Stock</div>
+                <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.DeadStockCount</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-4">
+        <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Sales This Month</div>
+                <div class="h5 mb-0 font-weight-bold text-gray-800">$@Model.TotalSalesThisMonth.ToString("N2")</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@*Monthly Sales & Profit*@
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Monthly Sales & Profit (Last 6 Months)</h6>
+    </div>
+    <div class="card-body">
+        <canvas id="salesProfitChart" height="400"></canvas>
+    </div>
+</div>
+
+
+@*Monthly Profit + Forecast + Mini Cards*@
+
+<div class="row">
+    <div class="col-md-3 mb-4">
+        <div class="card border-left-secondary shadow h-100 py-2 px-3 d-flex justify-content-between">
+            <div>
+                <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">Profit This Month</div>
+                <div class="h6 font-weight-bold text-gray-800">$@Model.ThisMonthProfit.ToString("N2")</div>
+            </div>
+            <div class="align-self-start">
+                @{
+                    var change = Model.MonthlyProfitChangePercent;
+                    bool isUp = change >= 0;
+                    string icon = isUp ? "fa-caret-up text-success" : "fa-caret-down text-danger";
+                    string badge = isUp ? "text-success" : "text-danger";
+                }
+                <div class="font-weight-bold @badge">
+                    <i class="fas @icon"></i> @Math.Abs(change).ToString("N1")% from last month
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-4">
+        <div class="card border-left-info shadow h-100 py-2 px-3">
+            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Sales Forecast</div>
+            <div class="h6 font-weight-bold text-gray-800">$@Model.ForecastedSales.ToString("N2") ±10%</div>
+            <div class="small text-muted">Expected Next Month</div>
+        </div>
+    </div>
+
+
+
+    <div class="col-md-3 mb-4">
+        <div class="card border-left-info shadow h-100 py-2 px-3">
+            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Top-Selling Product This Month</div>
+            <div class="h6 font-weight-bold text-gray-800">@Model.TopProductName</div>
+            <div class="small text-muted">@Model.TopProductQty sold</div>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-4">
+        <div class="card border-left-dark shadow h-100 py-2 px-3">
+            <div class="text-xs font-weight-bold text-dark text-uppercase mb-1">Best Salesperson This Month</div>
+            <div class="h6 font-weight-bold text-gray-800">@Model.TopSalespersonName</div>
+            <div class="small text-muted">$@Model.TopSalespersonTotal.ToString("N2") this month</div>
+        </div>
+    </div>
+</div>
+
+
+
+@*Peak Sales Time*@
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-secondary">Peak Sales Time (This Month)</h6>
+    </div>
+    <div class="card-body" style="height: 300px;">
+        <canvas id="salesHourChart"></canvas>
+    </div>
+</div>
+
+
+
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            var monthlyLabels = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Last6Months));
+            var monthlySales = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.MonthlySales));
+            var monthlyProfit = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.MonthlyProfits));
+
+            var ctx1 = document.getElementById('salesProfitChart').getContext('2d');
+            new Chart(ctx1, {
+                type: 'line',
+                data: {
+                    labels: monthlyLabels,
+                    datasets: [
+                        {
+                            label: 'Sales ($)',
+                            data: monthlySales,
+                            backgroundColor: 'rgba(78, 115, 223, 0.2)',
+                            borderColor: 'rgba(78, 115, 223, 1)',
+                            borderWidth: 2,
+                            tension: 0.3,
+                            fill: true
+                        },
+                        {
+                            label: 'Profit ($)',
+                            data: monthlyProfit,
+                            backgroundColor: 'rgba(28, 200, 138, 0.2)',
+                            borderColor: 'rgba(28, 200, 138, 1)',
+                            borderWidth: 2,
+                            tension: 0.3,
+                            fill: true
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            var hourLabels = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.SaleHours));
+            var hourCounts = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.HourlySalesCount));
+
+            var ctx2 = document.getElementById('salesHourChart').getContext('2d');
+            new Chart(ctx2, {
+                type: 'bar',
+                data: {
+                    labels: hourLabels,
+                    datasets: [{
+                        label: 'Sales Count',
+                        data: hourCounts,
+                        backgroundColor: 'rgba(54, 185, 204, 0.7)',
+                        borderColor: 'rgba(54, 185, 204, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+}

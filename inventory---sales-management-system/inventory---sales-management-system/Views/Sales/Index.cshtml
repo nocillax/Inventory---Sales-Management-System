@@ -4,6 +4,10 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewBag.Title = "Index";
     var role = Session["UserRole"] as String;
+
+    string sortIcon = ViewBag.SortBy == "Date"
+    ? (ViewBag.SortOrder == "asc" ? " ▲" : " ▼")
+    : "";
 }
 
 <h2 class="mb-4 text-primary font-weight-bold">
@@ -42,8 +46,7 @@
                 startDate = ViewBag.StartDate,
                 endDate = ViewBag.EndDate
             })">
-                @Html.DisplayNameFor(model => model.Date)
-                @(ViewBag.SortBy == "Date" ? (ViewBag.SortOrder == "asc" ? " ▲" : " ▼") : "")
+                @Html.DisplayNameFor(model => model.Date) @Html.Raw(sortIcon)
             </a>
         </th>
 

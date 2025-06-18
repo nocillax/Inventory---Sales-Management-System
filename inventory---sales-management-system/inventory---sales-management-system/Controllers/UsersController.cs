@@ -11,6 +11,7 @@ using System.Text;
 using System.Web;
 using System.Web.Configuration;
 using System.Web.Mvc;
+using static inventory___sales_management_system.Models.User;
 
 namespace inventory___sales_management_system.Controllers
 {
@@ -25,11 +26,55 @@ namespace inventory___sales_management_system.Controllers
         }
 
         // GET: Users
-        public ActionResult Index()
+        public ActionResult Index(int page = 1, string sortBy = "Username", string sortOrder = "asc", int? roleFilter = null)
         {
-            var users = db.Users.ToList();
+            int pageSize = 25;
+            var query = db.Users.AsQueryable();
+
+            // Apply role filter if provided
+            if (roleFilter.HasValue)
+            {
+                var selectedRole = (UserRole)roleFilter.Value;
+                query = query.Where(u => u.Role == selectedRole);
+            }
+
+            // Sorting
+            switch (sortBy)
+            {
+                case "Username":
+                default:
+                    query = sortOrder == "asc"
+                        ? query.OrderBy(u => u.Username)
+                        : query.OrderByDescending(u => u.Username);
+                    break;
+            }
+
+            int totalItems = query.Count();
+            var users = query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            // Populate dropdown with enum values
+            var roles = Enum.GetValues(typeof(UserRole))
+                            .Cast<UserRole>()
+                            .Select(r => new SelectListItem
+                            {
+                                Value = ((int)r).ToString(),
+                                Text = r.ToString()
+                            }).ToList();
+
+            ViewBag.Page = page;
+            ViewBag.TotalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+            ViewBag.SortBy = sortBy;
+            ViewBag.SortOrder = sortOrder;
+            ViewBag.RoleFilter = roleFilter;
+            ViewBag.RoleList = new SelectList(roles, "Value", "Text", roleFilter?.ToString());
+
             return View(users);
         }
+
+
 
         public ActionResult Details(int id)
         {

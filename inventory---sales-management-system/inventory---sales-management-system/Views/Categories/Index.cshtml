@@ -2,7 +2,7 @@
 
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
-    ViewBag.Title = "Index";
+    ViewBag.Title = "All Categories";
 }
 
 <style>
@@ -24,7 +24,16 @@
 <table class="table ">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.Name)
+            <a href="@Url.Action("Index", new {
+                    sortBy = "Name",
+                    sortOrder = ViewBag.SortBy == "Name" && ViewBag.SortOrder == "asc" ? "desc" : "asc",
+                    page = 1
+                })">
+                    @Html.DisplayNameFor(model => model.First().Name)
+                    @(ViewBag.SortBy == "Name"
+                ? (ViewBag.SortOrder == "asc" ? " ▲" : " ▼")
+                : "")
+            </a>
         </th>
         <th class="actions-column">Actions</th>
     </tr>
@@ -53,6 +62,21 @@
     }
 
 </table>
+
+@if (ViewBag.TotalPages > 1)
+{
+    <nav>
+        <ul class="pagination justify-content-center mt-4">
+            @for (int i = 1; i <= ViewBag.TotalPages; i++)
+            {
+                <li class="page-item @(i == ViewBag.Page ? "active" : "")">
+                    <a class="page-link" href="@Url.Action("Index", new { page = i, sortOrder = ViewBag.SortOrder })">@i</a>
+                </li>
+            }
+        </ul>
+    </nav>
+}
+
 
 @section  Scripts
 {

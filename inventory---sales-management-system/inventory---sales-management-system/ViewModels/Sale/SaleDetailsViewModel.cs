@@ -25,14 +25,14 @@ namespace inventory___sales_management_system.ViewModels.Sale
 
     public class SaleItemViewModel
     {
-        [Display(Name = "Product")]
         public string ProductName { get; set; }
-
         public int Quantity { get; set; }
 
-        [Display(Name = "Price at Sale")]
-        public decimal PriceAtSale { get; set; }
+        public decimal RegularPrice { get; set; }
+        public decimal? DiscountPercent { get; set; }
 
+        public decimal PriceAtSale { get; set; }
         public decimal Subtotal => Quantity * PriceAtSale;
     }
+
 }

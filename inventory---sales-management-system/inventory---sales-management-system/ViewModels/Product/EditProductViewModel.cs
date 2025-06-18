@@ -30,6 +30,13 @@ namespace inventory___sales_management_system.ViewModels.Product
         [Display(Name = "Activity Status")]
         public bool IsActive { get; set; } = false;
 
+        [Display(Name = "On Sale")]
+        public bool IsOnSale { get; set; } = false;
+
+        [Display(Name = "Discount (%)")]
+        [Range(0, 100, ErrorMessage = "Discount must be between 0 and 100")]
+        public decimal? DiscountPercent { get; set; }
+
         [Required(ErrorMessage = "Category is required")]
         public int? CategoryId { get; set; }
 

@@ -30,6 +30,12 @@ namespace inventory___sales_management_system.Models
         [Display(Name = "Active Status")]
         public bool IsActive { get; set; } = false;
 
+        public bool IsOnSale { get; set; } = false;
+
+        [Display(Name = "Discount (%)")]
+        [Range(0, 100)]
+        public decimal? DiscountPercent { get; set; } 
+
         [Display(Name = "Category")]
         public int? CategoryId { get; set; }
 

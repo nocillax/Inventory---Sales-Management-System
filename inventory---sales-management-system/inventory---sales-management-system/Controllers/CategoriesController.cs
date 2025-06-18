@@ -18,10 +18,37 @@ namespace inventory___sales_management_system.Controllers
         private ISMSDBContext db = new ISMSDBContext();
 
         // GET: Categories
-        public ActionResult Index()
+        public ActionResult Index(int page = 1, string sortBy = "Name", string sortOrder = "asc")
         {
-            return View(db.Categories.ToList());
+            int pageSize = 25;
+            var query = db.Categories.AsQueryable();
+
+            // Sorting logic
+            switch (sortBy)
+            {
+                case "Name":
+                default:
+                    query = sortOrder == "asc"
+                        ? query.OrderBy(c => c.Name)
+                        : query.OrderByDescending(c => c.Name);
+                    break;
+            }
+
+            int totalItems = query.Count();
+            var categories = query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            ViewBag.Page = page;
+            ViewBag.TotalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+            ViewBag.SortBy = sortBy;
+            ViewBag.SortOrder = sortOrder;
+
+            return View(categories);
         }
+
+
 
         // GET: Categories/Details/5
         public ActionResult Details(int? id)

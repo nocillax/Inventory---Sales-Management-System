@@ -4,6 +4,11 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewBag.Title = "Index";
     var role = Session["UserRole"]?.ToString();
+
+    Func<string, string> arrow = column =>
+        ViewBag.SortBy == column ? (ViewBag.SortOrder == "asc" ? " ▲" : " ▼") : "";
+    string toggleSort(string column) =>
+        ViewBag.SortBy == column && ViewBag.SortOrder == "asc" ? "desc" : "asc";
 }
 
 <style>
@@ -22,27 +27,147 @@
         @Html.ActionLink("Add New Product", "Create", null, new { @class = "btn btn-primary" })
     </p>
 }
+
+@using (Html.BeginForm("Index", "Products", FormMethod.Get, new { @class = "form-inline mb-3" }))
+{
+    <div class="d-flex flex-wrap justify-content-between w-100 gap-3">
+
+        <div class="flex-grow-1">
+            <label class="form-label d-block">Active:</label>
+            <select name="isActiveFilter" class="form-control" onchange="this.form.submit()">
+                <option value="">All</option>
+                <option value="true" @(ViewBag.IsActiveFilter == "true" ? "selected" : "")>Active</option>
+                <option value="false" @(ViewBag.IsActiveFilter == "false" ? "selected" : "")>Inactive</option>
+            </select>
+        </div>
+
+        <div class="flex-grow-1">
+            <label class="form-label d-block">Sale:</label>
+            <select name="onSaleFilter" class="form-control" onchange="this.form.submit()">
+                <option value="">All</option>
+                <option value="true" @(ViewBag.OnSaleFilter == "true" ? "selected" : "")>On Sale</option>
+                <option value="false" @(ViewBag.OnSaleFilter == "false" ? "selected" : "")>Not On Sale</option>
+            </select>
+        </div>
+
+        <div class="flex-grow-1">
+            <label class="form-label d-block">Price Range:</label>
+            <div class="d-flex align-items-center">
+                <input type="number" name="minPrice" class="form-control" placeholder="Min" value="@ViewBag.MinPrice" style="width: 100px;" />
+                <span class="mx-2">–</span>
+                <input type="number" name="maxPrice" class="form-control" placeholder="Max" value="@ViewBag.MaxPrice" style="width: 100px;" />
+                <button type="submit" class="btn btn-primary ml-2"><i class="fas fa-filter"></i></button>
+            </div>
+        </div>
+
+        <div class="flex-grow-1">
+            <label class="form-label d-block">Category:</label>
+            @Html.DropDownList("categoryFilter", (SelectList)ViewBag.Categories, "All Categories", new
+            {
+                @class = "form-control select2",
+                onchange = "this.form.submit();"
+            })
+        </div>
+    </div>
+
+
+
+    @* Preserve sorting + pagination *@
+    <input type="hidden" name="sortBy" value="@ViewBag.SortBy" />
+    <input type="hidden" name="sortOrder" value="@ViewBag.SortOrder" />
+
+}
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        @Html.ValidationSummary()
+    </div>
+}
+
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.Category.Name)
+            <a href="@Url.Action("Index", new {
+                        sortBy = "Category", sortOrder = toggleSort("Category"),
+                        page = 1,
+                        isActiveFilter = ViewBag.IsActiveFilter,
+                        onSaleFilter = ViewBag.OnSaleFilter,
+                        minPrice = ViewBag.MinPrice,
+                        maxPrice = ViewBag.MaxPrice,
+                        categoryFilter = ViewBag.CategoryFilter
+                    })">
+                Category @Html.Raw(arrow("Category"))
+            </a>
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Name)
+            <a href="@Url.Action("Index", new {
+                        sortBy = "Name", sortOrder = toggleSort("Name"),
+                        page = 1,
+                        isActiveFilter = ViewBag.IsActiveFilter,
+                        onSaleFilter = ViewBag.OnSaleFilter,
+                        minPrice = ViewBag.MinPrice,
+                        maxPrice = ViewBag.MaxPrice,
+                        categoryFilter = ViewBag.CategoryFilter
+                    })">
+                Product @Html.Raw(arrow("Name"))
+            </a>
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Price)
+            <a href="@Url.Action("Index", new {
+                        sortBy = "Price", sortOrder = toggleSort("Price"),
+                        page = 1,
+                        isActiveFilter = ViewBag.IsActiveFilter,
+                        onSaleFilter = ViewBag.OnSaleFilter,
+                        minPrice = ViewBag.MinPrice,
+                        maxPrice = ViewBag.MaxPrice,
+                        categoryFilter = ViewBag.CategoryFilter
+                    })">
+                Price @Html.Raw(arrow("Price"))
+            </a>
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.QuantityAvailable)
+            <a href="@Url.Action("Index", new {
+                        sortBy = "Discount", sortOrder = toggleSort("Discount"),
+                        page = 1,
+                        isActiveFilter = ViewBag.IsActiveFilter,
+                        onSaleFilter = ViewBag.OnSaleFilter,
+                        minPrice = ViewBag.MinPrice,
+                        maxPrice = ViewBag.MaxPrice,
+                        categoryFilter = ViewBag.CategoryFilter
+                    })">
+                Discount (%) @Html.Raw(arrow("Discount"))
+            </a>
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.DateEdited)
+            <a href="@Url.Action("Index", new {
+                        sortBy = "Quantity", sortOrder = toggleSort("Quantity"),
+                        page = 1,
+                        isActiveFilter = ViewBag.IsActiveFilter,
+                        onSaleFilter = ViewBag.OnSaleFilter,
+                        minPrice = ViewBag.MinPrice,
+                        maxPrice = ViewBag.MaxPrice,
+                        categoryFilter = ViewBag.CategoryFilter
+                    })">
+                Quantity @Html.Raw(arrow("Quantity"))
+            </a>
         </th>
+
+
         @if (role == "Manager")
         {
             <th style="text-align:center">
-                @Html.DisplayNameFor(model => model.IsActive)
+                <a href="@Url.Action("Index", new {
+                        sortBy = "Status", sortOrder = toggleSort("Status"),
+                        page = 1,
+                        isActiveFilter = ViewBag.IsActiveFilter,
+                        onSaleFilter = ViewBag.OnSaleFilter,
+                        minPrice = ViewBag.MinPrice,
+                        maxPrice = ViewBag.MaxPrice,
+                        categoryFilter = ViewBag.CategoryFilter
+                    })">
+                    Status @Html.Raw(arrow("Status"))
+                </a>
             </th>
 
             <th class="actions-column">Actions</th>
@@ -61,12 +186,16 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Price)
             </td>
+
+            <td>
+                @(item.DiscountPercent.HasValue ? item.DiscountPercent.Value.ToString("F2") : "-")
+            </td>
+
             <td>
                 @Html.DisplayFor(modelItem => item.QuantityAvailable)
             </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DateEdited)
-            </td>
+
+
             @if (role == "Manager")
             {
                 <td style="text-align:center">
@@ -99,6 +228,30 @@
     }
 
 </table>
+
+@if (ViewBag.TotalPages > 1)
+{
+    <nav>
+        <ul class="pagination justify-content-center mt-4">
+            @for (int i = 1; i <= ViewBag.TotalPages; i++)
+            {
+                <li class="page-item @(i == ViewBag.Page ? "active" : "")">
+                    <a class="page-link" href="@Url.Action("Index", new {
+                        page = i,
+                        sortBy = ViewBag.SortBy,
+                        sortOrder = ViewBag.SortOrder,
+                        isActiveFilter = ViewBag.IsActiveFilter,
+                        onSaleFilter = ViewBag.OnSaleFilter,
+                        minPrice = ViewBag.MinPrice,
+                        maxPrice = ViewBag.MaxPrice,
+                        categoryFilter = ViewBag.CategoryFilter
+                    })">@i</a>
+                </li>
+            }
+        </ul>
+    </nav>
+}
+
 
 
 @section Scripts {

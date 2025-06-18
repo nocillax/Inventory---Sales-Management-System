@@ -3,6 +3,10 @@
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewBag.Title = "Users List";
+    var nextSort = ViewBag.SortOrder == "asc" ? "desc" : "asc";
+    string sortIcon = ViewBag.SortBy == "Username"
+        ? (ViewBag.SortOrder == "asc" ? " ▲" : " ▼")
+        : "";
 }
 
 <style>
@@ -17,43 +21,93 @@
 
 <p>@Html.ActionLink("Create New User", "Create", "Users", null, new { @class = "btn btn-primary" })</p>
 
+<form method="get" class="form-inline mb-3">
+    <label class="mr-2" for="roleFilter">Filter by Role:</label>
+    @Html.DropDownList("roleFilter", (SelectList)ViewBag.RoleList, "All Roles", new
+    {
+        @class = "form-control mr-2",
+        onchange = "this.form.submit();"
+    })
+
+    <input type="hidden" name="sortBy" value="@ViewBag.SortBy" />
+    <input type="hidden" name="sortOrder" value="@ViewBag.SortOrder" />
+</form>
+
+
+
 <table class="table">
     <thead>
         <tr>
-            <th>Username</th>
+            <th>
+                <a href="@Url.Action("Index", new {
+                        sortBy = "Username",
+                        sortOrder = ViewBag.SortBy == "Username" && ViewBag.SortOrder == "asc" ? "desc" : "asc",
+                        page = 1,
+                        roleFilter = ViewBag.RoleFilter
+                    })">
+                    @Html.DisplayNameFor(model => model.First().Username) @Html.Raw(sortIcon)
+                </a>
+
+            </th>
             <th>Email</th>
             <th>Role</th>
             <th class="actions-column">Actions</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var user in Model)
+        @if (!Model.Any())
         {
             <tr>
-                <td>@user.Username</td>
-                <td>@user.Email</td>
-                <td>@user.Role.ToString()</td>
-
-                <td class="actions-column">
-                    <div style="display: flex; gap: 10px; align-items: center; justify-content: flex-end">
-
-                        @Html.ActionLink("Edit", "Edit", new { id = user.UserId }) |
-
-                        @using (Html.BeginForm("Delete", "Users", new { id = user.UserId }, FormMethod.Post, new { onsubmit = "return confirmDelete();" }))
-                        {
-                            @Html.AntiForgeryToken()
-                            <button type="submit" class="btn btn-link p-0 align-baseline" style="color: #dc3545;">
-                                Delete
-                            </button>
-                        }
-
-                    </div>
-                </td>
+                <td colspan="3" class="text-center text-muted">No users found with that role.</td>
             </tr>
+        }
+        else
+        {
+            foreach (var user in Model)
+            {
+                <tr>
+                    <td>@user.Username</td>
+                    <td>@user.Email</td>
+                    <td>@user.Role.ToString()</td>
+
+                    <td class="actions-column">
+                        <div style="display: flex; gap: 10px; align-items: center; justify-content: flex-end">
+
+                            @Html.ActionLink("Edit", "Edit", new { id = user.UserId }) |
+
+                            @using (Html.BeginForm("Delete", "Users", new { id = user.UserId }, FormMethod.Post, new { onsubmit = "return confirmDelete();" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-link p-0 align-baseline" style="color: #dc3545;">
+                                    Delete
+                                </button>
+                            }
+
+                        </div>
+                    </td>
+                </tr>
+            }
         }
     </tbody>
 </table>
-
+@if (ViewBag.TotalPages > 1)
+{
+    <nav>
+        <ul class="pagination justify-content-center mt-4">
+            @for (int i = 1; i <= ViewBag.TotalPages; i++)
+            {
+                <li class="page-item @(i == ViewBag.Page ? "active" : "")">
+                    <a class="page-link" href="@Url.Action("Index", new {
+                        page = i,
+                        sortBy = ViewBag.SortBy,
+                        sortOrder = ViewBag.SortOrder,
+                        roleFilter = ViewBag.RoleFilter
+                    })">@i</a>
+                </li>
+            }
+        </ul>
+    </nav>
+}
 
 @section Scripts {
     <script>

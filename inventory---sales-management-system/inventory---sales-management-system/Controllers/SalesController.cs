@@ -48,7 +48,7 @@ namespace inventory___sales_management_system.Controllers
             // Date range validation
             if (startDate.HasValue && endDate.HasValue && startDate > endDate)
             {
-                ModelState.AddModelError("", "Start date cannot be after end date.");
+                ModelState.AddModelError("", "Start Date cannot be after End Date.");
             }
 
             // Sorting
@@ -115,8 +115,11 @@ namespace inventory___sales_management_system.Controllers
                 {
                     ProductName = si.Product?.Name ?? "N/A",
                     Quantity = si.Quantity,
+                    RegularPrice = si.Product?.Price ?? 0,
+                    DiscountPercent = (si.Product != null && si.Product.IsOnSale) ? si.Product.DiscountPercent : null,
                     PriceAtSale = si.PriceAtSale
                 }).ToList()
+
             };
 
             return View(vm);
@@ -170,7 +173,9 @@ namespace inventory___sales_management_system.Controllers
                     return View(vm);
                 }
 
-                decimal priceAtSale = product.Price;
+                decimal discountPercent = (product.IsOnSale && product.DiscountPercent.HasValue) ? product.DiscountPercent.Value : 0;
+
+                decimal priceAtSale = product.Price * (1 - discountPercent / 100);
                 decimal totalPrice = priceAtSale * qty;
                 totalAmount += totalPrice;
 

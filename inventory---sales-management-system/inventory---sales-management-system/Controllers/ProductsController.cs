@@ -21,18 +21,124 @@ namespace inventory___sales_management_system.Controllers
         private ISMSDBContext db = new ISMSDBContext();
 
         // GET: Products
-        public ActionResult Index()
-        {
-            var role = Session["UserRole"]?.ToString();
-            var products = db.Products.Include(p => p.Category);
+        //public ActionResult Index()
+        //{
+        //    var role = Session["UserRole"]?.ToString();
+        //    var products = db.Products.Include(p => p.Category);
 
+        //    if (role == "Salesperson")
+        //    {
+        //        products = products.Where(p => p.IsActive);
+        //    }
+
+        //    return View(products.ToList());
+        //}
+
+        public ActionResult Index(
+    int page = 1,
+    string sortBy = "Name",
+    string sortOrder = "asc",
+    string isActiveFilter = null,
+    string onSaleFilter = null,
+    decimal? minPrice = null,
+    decimal? maxPrice = null,
+    int? categoryFilter = null)
+        {
+            int pageSize = 25;
+            var role = Session["UserRole"]?.ToString();
+
+            var query = db.Products.Include(p => p.Category).AsQueryable();
+
+            // Salesperson sees only active products
             if (role == "Salesperson")
             {
-                products = products.Where(p => p.IsActive);
+                query = query.Where(p => p.IsActive);
             }
 
-            return View(products.ToList());
+            // Filtering
+            if (!string.IsNullOrEmpty(isActiveFilter))
+            {
+                bool isActive = bool.Parse(isActiveFilter);
+                query = query.Where(p => p.IsActive == isActive);
+            }
+
+            if (!string.IsNullOrEmpty(onSaleFilter))
+            {
+                bool isOnSale = bool.Parse(onSaleFilter);
+                query = query.Where(p => p.IsOnSale == isOnSale);
+            }
+
+            if (minPrice.HasValue)
+            {
+                query = query.Where(p => p.Price >= minPrice.Value);
+            }
+
+            if (maxPrice.HasValue)
+            {
+                query = query.Where(p => p.Price <= maxPrice.Value);
+            }
+
+            if (minPrice.HasValue && maxPrice.HasValue && minPrice > maxPrice)
+            {
+                ModelState.AddModelError("", "Min Price cannot be higher than Max Price.");
+            }
+
+            if (categoryFilter.HasValue)
+            {
+                query = query.Where(p => p.CategoryId == categoryFilter.Value);
+            }
+
+            // Sorting
+            switch (sortBy)
+            {
+                case "Name":
+                    query = sortOrder == "asc" ? query.OrderBy(p => p.Name) : query.OrderByDescending(p => p.Name);
+                    break;
+                case "Category":
+                    query = sortOrder == "asc" ? query.OrderBy(p => p.Category.Name) : query.OrderByDescending(p => p.Category.Name);
+                    break;
+                case "Price":
+                    query = sortOrder == "asc" ? query.OrderBy(p => p.Price) : query.OrderByDescending(p => p.Price);
+                    break;
+                case "Discount":
+                    query = sortOrder == "asc" ? query.OrderBy(p => p.DiscountPercent) : query.OrderByDescending(p => p.DiscountPercent);
+                    break;
+                case "Quantity":
+                    query = sortOrder == "asc" ? query.OrderBy(p => p.QuantityAvailable) : query.OrderByDescending(p => p.QuantityAvailable);
+                    break;
+                case "Status":
+                    query = sortOrder == "asc" ? query.OrderBy(p => p.IsActive) : query.OrderByDescending(p => p.IsActive);
+                    break;
+                default:
+                    query = sortOrder == "asc" ? query.OrderBy(p => p.Name) : query.OrderByDescending(p => p.Name);
+                    break;
+            }
+
+            // Pagination
+            int totalItems = query.Count();
+            var products = query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            // ViewBag
+            ViewBag.Page = page;
+            ViewBag.TotalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+            ViewBag.SortBy = sortBy;
+            ViewBag.SortOrder = sortOrder;
+            ViewBag.IsActiveFilter = isActiveFilter;
+            ViewBag.OnSaleFilter = onSaleFilter;
+            ViewBag.MinPrice = minPrice;
+            ViewBag.MaxPrice = maxPrice;
+            ViewBag.CategoryFilter = categoryFilter;
+
+            // Category dropdown
+            var categories = db.Categories.OrderBy(c => c.Name).ToList();
+            ViewBag.Categories = new SelectList(categories, "CategoryId", "Name", categoryFilter);
+
+            return View(products);
         }
+
 
 
         // GET: Products/Details/5
@@ -76,6 +182,8 @@ namespace inventory___sales_management_system.Controllers
                     QuantityAvailable = 0,
                     LowStockThreshold = 0,
                     IsActive = false,
+                    IsOnSale = false,
+                    DiscountPercent = null,
                     DateEdited = DateTime.Now
                 };
 
@@ -105,6 +213,8 @@ namespace inventory___sales_management_system.Controllers
                 QuantityAvailable = product.QuantityAvailable,
                 LowStockThreshold = product.LowStockThreshold,
                 IsActive = product.IsActive,
+                IsOnSale = product.IsOnSale,
+                DiscountPercent = product.DiscountPercent,
                 CategoryId = product.CategoryId,
                 Categories = new SelectList(db.Categories, "CategoryId", "Name", product.CategoryId)
             };
@@ -128,6 +238,8 @@ namespace inventory___sales_management_system.Controllers
                 product.QuantityAvailable = vm.QuantityAvailable;
                 product.LowStockThreshold = vm.LowStockThreshold;
                 product.IsActive = vm.IsActive;
+                product.IsOnSale = vm.IsOnSale;
+                product.DiscountPercent = vm.DiscountPercent;
                 product.CategoryId = vm.CategoryId;
                 product.DateEdited = DateTime.Now;
 
