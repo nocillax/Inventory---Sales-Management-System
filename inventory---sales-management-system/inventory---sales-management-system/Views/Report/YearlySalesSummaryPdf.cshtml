@@ -1,16 +1,14 @@
-@model List<inventory___sales_management_system.ViewModels.Report.TopProductViewModel>
+@model List<inventory___sales_management_system.ViewModels.Report.SalesSummaryViewModel>
 @{
     Layout = null;
-    int month = ViewBag.Month;
     int year = ViewBag.Year;
-    string monthName = new DateTime(year, month, 1).ToString("MMMM yyyy");
 }
 
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
-    <title>Top-Selling Products ï¿½ @monthName</title>
+    <title>Yearly Sales Summary – @year</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -55,14 +53,13 @@
     </style>
 </head>
 <body>
-    <h2>Top-Selling Products - @monthName</h2>
+    <h2>Yearly Sales Summary - @year</h2>
 
     <table>
         <thead style="display: table-header-group;">
             <tr>
-                <th>Product</th>
-                <th>Quantity Sold</th>
-                <th>Total Revenue ($)</th>
+                <th>Month</th>
+                <th>Total Sales ($)</th>
             </tr>
         </thead>
         <tbody>
@@ -75,13 +72,12 @@
                 foreach (var item in Model)
                 {
                     <tr>
-                        <td>@item.ProductName</td>
-                        <td>@item.QuantitySold</td>
-                        <td>@item.TotalRevenue.ToString("F2")</td>
+                        <td>@item.GroupLabel</td>
+                        <td>@item.TotalSales.ToString("F2")</td>
                     </tr>
                 }
             }
-        </tbody>
+            </tbody>
     </table>
 </body>
 </html>

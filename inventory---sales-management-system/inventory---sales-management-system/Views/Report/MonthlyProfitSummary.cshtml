@@ -1,8 +1,8 @@
-﻿@model List<inventory___sales_management_system.ViewModels.Report.SalesSummaryViewModel>
+﻿@model List<inventory___sales_management_system.ViewModels.Report.ProfitSummaryViewModel>
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
 
-    ViewBag.Title = "Sales By Date";
+    ViewBag.Title = "Profit By Date";
     var page = ViewBag.Page ?? 1;
     var groupBy = ViewBag.GroupBy as string;
     int month = ViewBag.Month;
@@ -14,14 +14,14 @@
             : groupBy == "Product" ? "Product"
             : "Date";
 
-    string title = groupBy == "User" ? "Sales by Salesperson"
-                : groupBy == "Category" ? "Sales by Category"
-                : groupBy == "Product" ? "Sales by Product"
-                : "Sales by Date";
+    string title = groupBy == "User" ? "Profit by Salesperson"
+                : groupBy == "Category" ? "Profit by Category"
+                : groupBy == "Product" ? "Profit by Product"
+                : "Profit by Date";
 
 }
 
-<h2 class="mb-4 text-primary" style="font-weight: bold">Sales Summary – @monthName</h2>
+<h2 class="mb-4 text-primary" style="font-weight: bold">Profit Summary – @monthName</h2>
 
 <form method="get" class="form-inline mb-3">
     <input type="hidden" name="year" value="@year" />
@@ -37,7 +37,7 @@
 </form>
 
 <div class="text-right mb-2">
-    <a class="btn btn-success" target="_blank" href="@Url.Action("GenerateMonthlySalesSummaryPdf", "Report", new { year = year, month = month, groupBy = labelX, page = 1 })">
+    <a class="btn btn-success" target="_blank" href="@Url.Action("GenerateMonthlySummaryPdf", "Report", new { year = year, month = month, groupBy = labelX, page = 1 })">
         <i class="fas fa-file-pdf"></i> Generate PDF
     </a>
 </div>
@@ -49,7 +49,7 @@
 
 <div class="text-center mt-4">
     <a class="btn btn-outline-secondary mr-2"
-       href="@Url.Action("MonthlySalesSummary", new {
+       href="@Url.Action("MonthlyProfitSummary", new {
        month = (month == 1 ? 12 : month - 1),
        year = (month == 1 ? year - 1 : year),
        groupBy = groupBy
@@ -60,7 +60,7 @@
     @monthName
 
     <a class="btn btn-outline-secondary ml-2"
-       href="@Url.Action("MonthlySalesSummary", new {
+       href="@Url.Action("MonthlyProfitSummary", new {
        month = (month == 12 ? 1 : month + 1),
        year = (month == 12 ? year + 1 : year),
        groupBy = groupBy
@@ -74,11 +74,11 @@
     <thead>
         <tr>
             <th>@labelX</th>
-            <th>Total Sales ($)</th>
+            <th>Total Profit ($)</th>
         </tr>
     </thead>
     <tbody>
-        @if (Model.All(m => m.TotalSales == 0))
+        @if (Model.All(m => m.TotalProfit == 0))
         {
             <tr><td colspan="2">No sales data found for this month.</td></tr>
         }
@@ -88,7 +88,7 @@
             {
                 <tr>
                     <td>@item.GroupLabel</td>
-                    <td>@item.TotalSales.ToString("F2")</td>
+                    <td>@item.TotalProfit.ToString("F2")</td>
                 </tr>
             }
         }
@@ -102,7 +102,7 @@
             @for (int i = 1; i <= ViewBag.TotalPages; i++)
             {
                 <li class="page-item @(i == ViewBag.Page ? "active" : "")">
-                    <a class="page-link" href="@Url.Action("MonthlySalesSummary", new {
+                    <a class="page-link" href="@Url.Action("MonthlyProfitSummary", new {
                         page = i,
                         year = ViewBag.Year,
                         month = ViewBag.Month,
@@ -127,7 +127,7 @@
             data: {
                 labels: labels,
                 datasets: [{
-                    label: 'Total Sales ($)',
+                    label: 'Total Profit ($)',
                     data: data,
                     backgroundColor: 'rgba(78, 115, 223, 0.5)',
                     borderColor: 'rgba(78, 115, 223, 1)',

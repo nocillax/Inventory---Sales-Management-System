@@ -1,0 +1,68 @@
+﻿@model List<inventory___sales_management_system.ViewModels.Report.DeadStockViewModel>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Dead Stock Report";
+
+    int days = ViewBag.Days;
+    var options = ViewBag.DayOptions as List<int>;
+}
+
+<h2 class="mb-4 text-primary font-weight-bold">Dead Stock Report – Not Sold in Last @days Days</h2>
+
+<form method="get" class="form-inline mb-3">
+    <label for="days" class="mr-2">Show products not sold in:</label>
+    <select id="days" name="days" class="form-control" onchange="this.form.submit()">
+        @foreach (var option in options)
+        {
+            <option value="@option" @(option == days ? "selected" : "")>@option days</option>
+        }
+    </select>
+</form>
+
+<div class="text-right mb-2">
+    <a class="btn btn-success" target="_blank" href="@Url.Action("GenerateDeadStockPdf", "Report", new { days = days })">
+        <i class="fas fa-file-pdf"></i> Generate PDF
+    </a>
+</div>
+
+<table class="table table">
+    <thead>
+        <tr>
+            <th>Product</th>
+            <th>Last Sold</th>
+            <th>Quantity Available</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (!Model.Any())
+        {
+            <tr><td colspan="3">All products have recent sales.</td></tr>
+        }
+        else
+        {
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.ProductName</td>
+                    <td>@(item.LastSoldDate?.ToString("MMM dd, yyyy") ?? "Never Sold")</td>
+                    <td>@item.QuantityAvailable</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+@if (ViewBag.TotalPages > 1)
+{
+    <nav>
+        <ul class="pagination justify-content-center mt-4">
+            @for (int i = 1; i <= ViewBag.TotalPages; i++)
+            {
+                <li class="page-item @(i == ViewBag.Page ? "active" : "")">
+                    <a class="page-link" href="@Url.Action("DeadStock", "Report", new { days = ViewBag.Days, page = i })">@i</a>
+                </li>
+            }
+        </ul>
+    </nav>
+}
+

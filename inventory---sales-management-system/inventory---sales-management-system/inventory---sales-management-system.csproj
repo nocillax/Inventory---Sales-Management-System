@@ -187,7 +187,9 @@
     <Compile Include="ViewModels\LoginViewModel.cs" />
     <Compile Include="ViewModels\Product\CreateProductViewModel.cs" />
     <Compile Include="ViewModels\Product\EditProductViewModel.cs" />
+    <Compile Include="ViewModels\Report\DeadStockViewModel.cs" />
     <Compile Include="ViewModels\Report\ProductStockViewModel.cs" />
+    <Compile Include="ViewModels\Report\ProfitSummaryViewModel.cs" />
     <Compile Include="ViewModels\Report\SalesSummaryViewModel.cs" />
     <Compile Include="ViewModels\Report\TopProductViewModel.cs" />
     <Compile Include="ViewModels\Sale\CreateSaleViewModel.cs" />
@@ -907,6 +909,12 @@
     <Content Include="Views\Report\ProductStockReportPdf.cshtml" />
     <Content Include="Views\Report\TopProducts.cshtml" />
     <Content Include="Views\Report\TopProductsPdf.cshtml" />
+    <Content Include="Views\Report\YearlySalesSummary.cshtml" />
+    <Content Include="Views\Report\YearlySalesSummaryPdf.cshtml" />
+    <Content Include="Views\Report\DeadStock.cshtml" />
+    <Content Include="Views\Report\DeadStockPdf.cshtml" />
+    <Content Include="Views\Report\MonthlyProfitSummary.cshtml" />
+    <Content Include="Views\Report\MonthlyProfitSummaryPdf.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

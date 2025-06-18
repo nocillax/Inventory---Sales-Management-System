@@ -1,16 +1,27 @@
-@model List<inventory___sales_management_system.ViewModels.Report.TopProductViewModel>
+﻿@model List<inventory___sales_management_system.ViewModels.Report.ProfitSummaryViewModel>
 @{
     Layout = null;
     int month = ViewBag.Month;
     int year = ViewBag.Year;
+    string groupBy = ViewBag.GroupBy as string ?? "Date";
     string monthName = new DateTime(year, month, 1).ToString("MMMM yyyy");
+
+    string label = groupBy == "User" ? "Salesperson"
+                : groupBy == "Category" ? "Category"
+                : groupBy == "Product" ? "Product"
+                : "Date";
+
+    string title = groupBy == "User" ? "Profit by Salesperson"
+                : groupBy == "Category" ? "Profit by Category"
+                : groupBy == "Product" ? "Profit by Product"
+                : "Profit by Date";
 }
 
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
-    <title>Top-Selling Products � @monthName</title>
+    <title>@title – @monthName</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -55,33 +66,31 @@
     </style>
 </head>
 <body>
-    <h2>Top-Selling Products - @monthName</h2>
-
+    <h2>@title – @monthName</h2>
     <table>
         <thead style="display: table-header-group;">
             <tr>
-                <th>Product</th>
-                <th>Quantity Sold</th>
-                <th>Total Revenue ($)</th>
+                <th>@label</th>
+                <th>Total Profit ($)</th>
             </tr>
         </thead>
         <tbody>
-            @if (!Model.Any())
+            @if (Model.All(m => m.TotalProfit == 0))
             {
-                <tr><td colspan="3">No sales data found for this month.</td></tr>
+                <tr><td colspan="2">No sales data found for this month.</td></tr>
             }
             else
             {
                 foreach (var item in Model)
                 {
                     <tr>
-                        <td>@item.ProductName</td>
-                        <td>@item.QuantitySold</td>
-                        <td>@item.TotalRevenue.ToString("F2")</td>
+                        <td>@item.GroupLabel</td>
+                        <td>@item.TotalProfit.ToString("F2")</td>
                     </tr>
                 }
             }
         </tbody>
     </table>
+
 </body>
 </html>

@@ -6,36 +6,67 @@
     var role = Session["UserRole"] as String;
 }
 
-@if (role == "Manager")
-{
-    <h2 class="mb-4 text-primary" style="font-weight: bold">Sales History</h2>
-}
-
-@if (role == "SalesPerson")
-{
-    <h2 class="mb-4 text-primary" style="font-weight: bold">My Sales History</h2>
-}
+<h2 class="mb-4 text-primary font-weight-bold">
+    @(role == "Manager" ? "Sales History" : "My Sales History")
+</h2>
 
 
 <p>
     @Html.ActionLink("Create New", "Create")
 </p>
+
+<form method="get" class="form-inline mb-3">
+    <label class="mr-2">From:</label>
+    <input type="date" name="startDate" class="form-control mr-3" value="@ViewBag.StartDate" />
+
+    <label class="mr-2">To:</label>
+    <input type="date" name="endDate" class="form-control mr-3" value="@ViewBag.EndDate" />
+
+    <button type="submit" class="btn btn-primary">Filter</button>
+</form>
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        @Html.ValidationSummary()
+    </div>
+}
+
+
 <table class="table">
     <tr>
+        <th>
+            <a href="@Url.Action("Index", new {
+                sortBy = "Date",
+                sortOrder = ViewBag.SortBy == "Date" && ViewBag.SortOrder == "asc" ? "desc" : "asc",
+                startDate = ViewBag.StartDate,
+                endDate = ViewBag.EndDate
+            })">
+                @Html.DisplayNameFor(model => model.Date)
+                @(ViewBag.SortBy == "Date" ? (ViewBag.SortOrder == "asc" ? " ▲" : " ▼") : "")
+            </a>
+        </th>
+
         @if (role == "Manager")
         {
             <th>
                 @Html.DisplayNameFor(model => model.SalesPersonName)
             </th>
         }
-        <th>
-            @Html.DisplayNameFor(model => model.Date)
-        </th>
+
         <th>
             @Html.DisplayNameFor(model => model.BuyerName)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.TotalAmount)
+            <a href="@Url.Action("Index", new {
+                sortBy = "TotalAmount",
+                sortOrder = ViewBag.SortBy == "TotalAmount" && ViewBag.SortOrder == "asc" ? "desc" : "asc",
+                startDate = ViewBag.StartDate,
+                endDate = ViewBag.EndDate
+            })">
+                @Html.DisplayNameFor(model => model.TotalAmount)
+                @(ViewBag.SortBy == "TotalAmount" ? (ViewBag.SortOrder == "asc" ? " ▲" : " ▼") : "")
+            </a>
         </th>
         <th>
             Action
@@ -45,15 +76,17 @@
     @foreach (var item in Model)
     {
         <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Date)
+            </td>
+
             @if (role == "Manager")
             {
                 <td>
                     @Html.DisplayFor(modelItem => item.SalesPersonName)
                 </td>
             }
-            <td>
-                @Html.DisplayFor(modelItem => item.Date)
-            </td>
+
             <td>
                 @Html.DisplayFor(modelItem => item.BuyerName)
             </td>
@@ -67,6 +100,27 @@
     }
 
 </table>
+
+@if (ViewBag.TotalPages > 1)
+{
+    <nav>
+        <ul class="pagination justify-content-center mt-4">
+            @for (int i = 1; i <= ViewBag.TotalPages; i++)
+            {
+                <li class="page-item @(i == ViewBag.Page ? "active" : "")">
+                    <a class="page-link" href="@Url.Action("Index", new {
+                        page = i,
+                        sortBy = ViewBag.SortBy,
+                        sortOrder = ViewBag.SortOrder,
+                        startDate = ViewBag.StartDate,
+                        endDate = ViewBag.EndDate
+                    })">@i</a>
+                </li>
+            }
+        </ul>
+    </nav>
+}
+
 
 @section Scripts {
     <script>

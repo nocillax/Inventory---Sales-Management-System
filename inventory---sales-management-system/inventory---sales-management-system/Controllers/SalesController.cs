@@ -22,29 +22,75 @@ namespace inventory___sales_management_system.Controllers
         private ISMSDBContext db = new ISMSDBContext();
 
         // GET: Sales
-        public ActionResult Index()
+        public ActionResult Index(DateTime? startDate, DateTime? endDate, string sortBy = "Date", string sortOrder = "desc", int page = 1)
         {
             var role = Session["UserRole"]?.ToString();
-            var userId = (int)Session["UserId"]; // Assuming UserId is stored as int in session
+            var userId = (int)Session["UserId"];
+            int pageSize = 25;
 
-            var salesQuery = db.Sales.Include(s => s.User);
+            var salesQuery = db.Sales.Include(s => s.User).AsQueryable();
 
             if (role == "Salesperson")
             {
                 salesQuery = salesQuery.Where(s => s.UserId == userId);
             }
 
-            var sales = salesQuery.Select(s => new SaleHistoryViewModel
+            if (startDate.HasValue)
             {
-                SaleId = s.SaleId,
-                Date = s.Date,
-                SalesPersonName = s.User.Username,
-                BuyerName = s.BuyerName,
-                TotalAmount = s.TotalAmount
-            }).ToList();
+                salesQuery = salesQuery.Where(s => DbFunctions.TruncateTime(s.Date) >= startDate);
+            }
+
+            if (endDate.HasValue)
+            {
+                salesQuery = salesQuery.Where(s => DbFunctions.TruncateTime(s.Date) <= endDate);
+            }
+
+            // Date range validation
+            if (startDate.HasValue && endDate.HasValue && startDate > endDate)
+            {
+                ModelState.AddModelError("", "Start date cannot be after end date.");
+            }
+
+            // Sorting
+            switch (sortBy)
+            {
+                case "TotalAmount":
+                    salesQuery = (sortOrder == "asc")
+                        ? salesQuery.OrderBy(s => s.TotalAmount)
+                        : salesQuery.OrderByDescending(s => s.TotalAmount);
+                    break;
+                default:
+                    salesQuery = (sortOrder == "asc")
+                        ? salesQuery.OrderBy(s => s.Date)
+                        : salesQuery.OrderByDescending(s => s.Date);
+                    break;
+            }
+
+            var totalCount = salesQuery.Count();
+
+            var sales = salesQuery
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .Select(s => new SaleHistoryViewModel
+                {
+                    SaleId = s.SaleId,
+                    Date = s.Date,
+                    SalesPersonName = s.User.Username,
+                    BuyerName = s.BuyerName,
+                    TotalAmount = s.TotalAmount
+                }).ToList();
+
+            ViewBag.Page = page;
+            ViewBag.TotalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+            ViewBag.SortBy = sortBy;
+            ViewBag.SortOrder = sortOrder;
+            ViewBag.StartDate = startDate?.ToString("yyyy-MM-dd");
+            ViewBag.EndDate = endDate?.ToString("yyyy-MM-dd");
 
             return View(sales);
         }
+
+
 
 
         // GET: Sales/Details/5

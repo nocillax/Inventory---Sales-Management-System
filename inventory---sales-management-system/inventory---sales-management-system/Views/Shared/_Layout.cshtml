@@ -178,6 +178,7 @@
                             <a class="collapse-item" href="@Url.Action("MonthlySalesSummary", "Report", new { groupBy = "User" })">By Salesperson</a>
                             <a class="collapse-item" href="@Url.Action("MonthlySalesSummary", "Report", new { groupBy = "Category" })">By Category</a>
                             <a class="collapse-item" href="@Url.Action("MonthlySalesSummary", "Report", new { groupBy = "Product" })">By Product</a>
+                            <a class="collapse-item" href="@Url.Action("YearlySalesSummary", "Report")">By Year</a>
                             <div class="dropdown-divider"></div>
 
                             <h6 class="collapse-header">Top Products</h6>
@@ -187,6 +188,15 @@
                             <h6 class="collapse-header">Stock Summary</h6>
                             <a class="collapse-item" href="@Url.Action("ProductStockReport", "Report", new { lowStockOnly = false })">All Active Products</a>
                             <a class="collapse-item" href="@Url.Action("ProductStockReport", "Report", new { lowStockOnly = true })">Low Stock Only</a>
+                            <a class="collapse-item" href="@Url.Action("DeadStock", "Report")">Dead Stock</a>
+
+                            <h6 class="collapse-header">Profit Summary</h6>
+                            <a class="collapse-item" href="@Url.Action("MonthlyProfitSummary", "Report", new { groupBy = "Date" })">By Date</a>
+                            <a class="collapse-item" href="@Url.Action("MonthlyProfitSummary", "Report", new { groupBy = "User" })">By Salesperson</a>
+                            <a class="collapse-item" href="@Url.Action("MonthlyProfitSummary", "Report", new { groupBy = "Category" })">By Category</a>
+                            <a class="collapse-item" href="@Url.Action("MonthlyProfitSummary", "Report", new { groupBy = "Product" })">By Product</a>
+                            <a class="collapse-item" href="@Url.Action("YearlyProfitSummary", "Report")">By Year</a>
+                            <div class="dropdown-divider"></div>
                         </div>
                     </div>
                 </li>
