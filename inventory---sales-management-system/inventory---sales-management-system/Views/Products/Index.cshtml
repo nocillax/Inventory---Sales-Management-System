@@ -32,14 +32,18 @@
 {
     <div class="d-flex flex-wrap justify-content-between w-100 gap-3">
 
-        <div class="flex-grow-1">
-            <label class="form-label d-block">Active:</label>
-            <select name="isActiveFilter" class="form-control" onchange="this.form.submit()">
-                <option value="">All</option>
-                <option value="true" @(ViewBag.IsActiveFilter == "true" ? "selected" : "")>Active</option>
-                <option value="false" @(ViewBag.IsActiveFilter == "false" ? "selected" : "")>Inactive</option>
-            </select>
-        </div>
+        @if (role == "Manager")
+        {
+            <div class="flex-grow-1">
+                <label class="form-label d-block">Active:</label>
+                <select name="isActiveFilter" class="form-control" onchange="this.form.submit()">
+                    <option value="">All</option>
+                    <option value="true" @(ViewBag.IsActiveFilter == "true" ? "selected" : "")>Active</option>
+                    <option value="false" @(ViewBag.IsActiveFilter == "false" ? "selected" : "")>Inactive</option>
+                </select>
+            </div>
+        }
+
 
         <div class="flex-grow-1">
             <label class="form-label d-block">Sale:</label>

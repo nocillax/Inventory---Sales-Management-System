@@ -15,10 +15,6 @@
 </h2>
 
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-
 <form method="get" class="form-inline mb-3">
     <label class="mr-2">From:</label>
     <input type="date" name="startDate" class="form-control mr-3" value="@ViewBag.StartDate" />
@@ -125,25 +121,3 @@
 }
 
 
-@section Scripts {
-    <script>
-        $(function() {
-            var saleCreated = '@TempData["SaleCreated"]';
-            var saleId = '@TempData["SaleId"]';
-
-            if (saleCreated === 'True') {
-                toastr.options = {
-                    "closeButton": true,
-                    "progressBar": true,
-                    "timeOut": "10000"
-                };
-
-                toastr.success(
-                    'Sale created successfully! <br/><button type="button" class="btn btn-sm btn-light" onclick="window.open(\'@Url.Action("Invoice", "Sales")/' + saleId + '\', \'_blank\')">View Invoice</button>',
-                    'Success',
-                    { timeOut: 0, extendedTimeOut: 0, escapeHtml: false }
-                );
-            }
-        });
-    </script>
-}

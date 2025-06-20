@@ -36,175 +36,177 @@
         @if (Session["UserId"] != null)
         {
             <!-- Sidebar -->
-        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+            <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
-            <!-- Sidebar - Brand -->
-            <!-- Sidebar - Brand -->
-            <!--<a class="sidebar-brand d-flex align-items-center justify-content-center" href="@Url.Action("Index", "Home")">
-        <img src="~/Logo/nocillax-typo.svg" alt="Logo" style="height: 250px ;" />
-    </a>-->
-            <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
-                <div class="sidebar-brand-text mx-3">nocillax.</div>
-            </a>
-
-
-            <!-- Divider -->
-            <hr class="sidebar-divider my-0">
-
-            <!-- Nav Item - Dashboard -->
-            <li class="nav-item active">
-                <a class="nav-link" href="@Url.Action("Index", "Home")">
-                    <i class="fas fa-fw fa-tachometer-alt"></i>
-                    <span>Dashboard</span>
+                <!-- Sidebar - Brand -->
+                <!-- Sidebar - Brand -->
+                <!--<a class="sidebar-brand d-flex align-items-center justify-content-center" href="@Url.Action("Index", "Home")">
+                    <img src="~/Logo/nocillax-typo.svg" alt="Logo" style="height: 250px ;" />
+                </a>-->
+                <!-- Sidebar - Brand -->
+                <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+                    <div class="sidebar-brand-text mx-3">nocillax.</div>
                 </a>
-            </li>
 
 
-            <!-- Divider -->
-            <hr class="sidebar-divider">
+                <!-- Divider -->
+                <hr class="sidebar-divider my-0">
 
-            <!-- Heading -->
-            @*<div class="sidebar-heading">
-            Interface
-        </div>*@
-
-            @if (Session["UserRole"]?.ToString() == "Manager")
-            {
-                <!-- Nav Item - Category Collapse Menu -->
-                <li class="nav-item">
-                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseCategory"
-                       aria-expanded="true" aria-controls="collapseCategory">
-                        <i class="fas fa-tags"></i>
-                        <span>Category</span>
+                <!-- Nav Item - Dashboard -->
+                <li class="nav-item active">
+                    <a class="nav-link" href="@Url.Action("Index", "Home")">
+                        <i class="fas fa-fw fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
                     </a>
-                    <div id="collapseCategory" class="collapse" aria-labelledby="headingCategory" data-parent="#accordionSidebar">
-                        <div class="bg-white py-2 collapse-inner rounded">
-                            @*<h6 class="collapse-header">Custom Components:</h6>*@
-                            <a class="collapse-item" href="@Url.Action("Index", "Categories")">All Categories</a>
-                            <a class="collapse-item" href="@Url.Action("Create", "Categories")">Add Category</a>
-                        </div>
-                    </div>
                 </li>
-            }
 
 
-            <!-- Nav Item - Products Collapse Menu -->
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseProducts"
-                   aria-expanded="true" aria-controls="collapseProducts">
-                    <i class="fas fa-box"></i>
-                    <span>Product</span>
-                </a>
-                <div id="collapseProducts" class="collapse" aria-labelledby="headingProducts"
-                     data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        @*<h6 class="collapse-header">Custom Utilities:</h6>*@
-                        <a class="collapse-item" href="@Url.Action("Index", "Products")">All Products</a>
-                        @if (Session["UserRole"]?.ToString() == "Manager")
-                        {
-                            <a class="collapse-item" href="@Url.Action("Create", "Products")">Add Product</a>
-                        }
-                    </div>
-                </div>
-            </li>
+                <!-- Divider -->
+                <hr class="sidebar-divider">
 
-            <!-- Nav Item - Sales Collapse Menu -->
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseSales"
-                   aria-expanded="true" aria-controls="collapseSales">
-                    <i class="fas fa-shopping-cart"></i>
-                    <span>Sales</span>
-                </a>
-                <div id="collapseSales" class="collapse" aria-labelledby="headingSales"
-                     data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        @*<h6 class="collapse-header">Custom Utilities:</h6>*@
-                        <a class="collapse-item" href="@Url.Action("Index", "Sales")">Sales History</a>
-                        <a class="collapse-item" href="@Url.Action("Create", "Sales")">Add Sale</a>
-                    </div>
-                </div>
-            </li>
+                <!-- Heading -->
+                @*<div class="sidebar-heading">
+                        Interface
+                    </div>*@
 
-            @if (Session["UserRole"]?.ToString() == "Manager")
-            {
-                <!-- Nav Item - Stocks Collapse Menu -->
+                @if (Session["UserRole"]?.ToString() == "Manager")
+                {
+                    <!-- Nav Item - Category Collapse Menu -->
+                    <li class="nav-item">
+                        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseCategory"
+                           aria-expanded="true" aria-controls="collapseCategory">
+                            <i class="fas fa-tags"></i>
+                            <span>Category</span>
+                        </a>
+                        <div id="collapseCategory" class="collapse" aria-labelledby="headingCategory" data-parent="#accordionSidebar">
+                            <div class="bg-white py-2 collapse-inner rounded">
+                                @*<h6 class="collapse-header">Custom Components:</h6>*@
+                                <a class="collapse-item" href="@Url.Action("Index", "Categories")">All Categories</a>
+                                <a class="collapse-item" href="@Url.Action("Create", "Categories")">Add Category</a>
+                            </div>
+                        </div>
+                    </li>
+                }
+
+
+                <!-- Nav Item - Products Collapse Menu -->
                 <li class="nav-item">
-                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseStocks"
-                       aria-expanded="true" aria-controls="collapseStocks">
-                        <i class="fas fa-cubes"></i>
-                        <span>Stocks</span>
+                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseProducts"
+                       aria-expanded="true" aria-controls="collapseProducts">
+                        <i class="fas fa-box"></i>
+                        <span>Product</span>
                     </a>
-                    <div id="collapseStocks" class="collapse" aria-labelledby="headingStocks"
+                    <div id="collapseProducts" class="collapse" aria-labelledby="headingProducts"
                          data-parent="#accordionSidebar">
                         <div class="bg-white py-2 collapse-inner rounded">
                             @*<h6 class="collapse-header">Custom Utilities:</h6>*@
-                            <a class="collapse-item" href="@Url.Action("StockHistory", "Products")">Stock History</a>
-                            @*<a class="collapse-item" href="@Url.Action("Create", "Sales")">Add Sale</a>*@
+                            <a class="collapse-item" href="@Url.Action("Index", "Products")">All Products</a>
+                            @if (Session["UserRole"]?.ToString() == "Manager")
+                            {
+                                <a class="collapse-item" href="@Url.Action("Create", "Products")">Add Product</a>
+                            }
                         </div>
                     </div>
                 </li>
 
-                <!-- Nav Item - Users Collapse Menu -->
+                <!-- Nav Item - Sales Collapse Menu -->
                 <li class="nav-item">
-                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUsers"
-                       aria-expanded="true" aria-controls="collapseStocks">
-                        <i class="fas fa-cubes"></i>
-                        <span>Users</span>
+                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseSales"
+                       aria-expanded="true" aria-controls="collapseSales">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span>Sales</span>
                     </a>
-                    <div id="collapseUsers" class="collapse" aria-labelledby="headingUsers"
+                    <div id="collapseSales" class="collapse" aria-labelledby="headingSales"
                          data-parent="#accordionSidebar">
                         <div class="bg-white py-2 collapse-inner rounded">
-                            @*<h6 class="collapse-header">Custom Utilities</h6>*@
-                            <a class="collapse-item" href="@Url.Action("Index", "Users")">All Users</a>
-                            <a class="collapse-item" href="@Url.Action("Create", "Users")">Add User</a>
+                            @*<h6 class="collapse-header">Custom Utilities:</h6>*@
+                            <a class="collapse-item" href="@Url.Action("Index", "Sales")">Sales History</a>
+                            <a class="collapse-item" href="@Url.Action("Create", "Sales")">Add Sale</a>
                         </div>
                     </div>
                 </li>
 
-
-                <!-- Nav Item - Reports Collapse Menu -->
-                <li class="nav-item">
-                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseReports"
-                       aria-expanded="true" aria-controls="collapseReports">
-                        <i class="fas fa-chart-bar"></i>
-                        <span>Reports</span>
-                    </a>
-                    <div id="collapseReports" class="collapse" aria-labelledby="headingReports" data-parent="#accordionSidebar">
-                        <div class="bg-white py-2 collapse-inner rounded">
-
-                            <h6 class="collapse-header">Sales Summary</h6>
-                            <a class="collapse-item" href="@Url.Action("MonthlySalesSummary", "Report", new { groupBy = "Date" })">By Date</a>
-                            <a class="collapse-item" href="@Url.Action("MonthlySalesSummary", "Report", new { groupBy = "User" })">By Salesperson</a>
-                            <a class="collapse-item" href="@Url.Action("MonthlySalesSummary", "Report", new { groupBy = "Category" })">By Category</a>
-                            <a class="collapse-item" href="@Url.Action("MonthlySalesSummary", "Report", new { groupBy = "Product" })">By Product</a>
-                            <a class="collapse-item" href="@Url.Action("YearlySalesSummary", "Report")">By Year</a>
-                            <div class="dropdown-divider"></div>
-
-                            <h6 class="collapse-header">Top Products</h6>
-                            <a class="collapse-item" href="@Url.Action("TopProducts", "Report")">By Quantity Sold</a>
-                            <div class="dropdown-divider"></div>
-
-                            <h6 class="collapse-header">Stock Summary</h6>
-                            <a class="collapse-item" href="@Url.Action("ProductStockReport", "Report", new { lowStockOnly = false })">All Active Products</a>
-                            <a class="collapse-item" href="@Url.Action("ProductStockReport", "Report", new { lowStockOnly = true })">Low Stock Only</a>
-                            <a class="collapse-item" href="@Url.Action("DeadStock", "Report")">Dead Stock</a>
-
-                            <h6 class="collapse-header">Profit Summary</h6>
-                            <a class="collapse-item" href="@Url.Action("MonthlyProfitSummary", "Report", new { groupBy = "Date" })">By Date</a>
-                            <a class="collapse-item" href="@Url.Action("MonthlyProfitSummary", "Report", new { groupBy = "User" })">By Salesperson</a>
-                            <a class="collapse-item" href="@Url.Action("MonthlyProfitSummary", "Report", new { groupBy = "Category" })">By Category</a>
-                            <a class="collapse-item" href="@Url.Action("MonthlyProfitSummary", "Report", new { groupBy = "Product" })">By Product</a>
-                            <a class="collapse-item" href="@Url.Action("YearlyProfitSummary", "Report")">By Year</a>
-                            <div class="dropdown-divider"></div>
+                @if (Session["UserRole"]?.ToString() == "Manager")
+                {
+                    <!-- Nav Item - Stocks Collapse Menu -->
+                    <li class="nav-item">
+                        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseStocks"
+                           aria-expanded="true" aria-controls="collapseStocks">
+                            <i class="fas fa-cubes"></i>
+                            <span>Stocks</span>
+                        </a>
+                        <div id="collapseStocks" class="collapse" aria-labelledby="headingStocks"
+                             data-parent="#accordionSidebar">
+                            <div class="bg-white py-2 collapse-inner rounded">
+                                @*<h6 class="collapse-header">Custom Utilities:</h6>*@
+                                <a class="collapse-item" href="@Url.Action("StockHistory", "Products")">Stock History</a>
+                                @*<a class="collapse-item" href="@Url.Action("Create", "Sales")">Add Sale</a>*@
+                            </div>
                         </div>
-                    </div>
-                </li>
+                    </li>
+
+                    <!-- Nav Item - Users Collapse Menu -->
+                    <li class="nav-item">
+                        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUsers"
+                           aria-expanded="true" aria-controls="collapseStocks">
+                            <i class="fas fa-cubes"></i>
+                            <span>Users</span>
+                        </a>
+                        <div id="collapseUsers" class="collapse" aria-labelledby="headingUsers"
+                             data-parent="#accordionSidebar">
+                            <div class="bg-white py-2 collapse-inner rounded">
+                                @*<h6 class="collapse-header">Custom Utilities</h6>*@
+                                <a class="collapse-item" href="@Url.Action("Index", "Users")">All Users</a>
+                                <a class="collapse-item" href="@Url.Action("Create", "Users")">Add User</a>
+                            </div>
+                        </div>
+                    </li>
 
 
-            }
+                    <!-- Nav Item - Reports Collapse Menu -->
+                    <li class="nav-item">
+                        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseReports"
+                           aria-expanded="true" aria-controls="collapseReports">
+                            <i class="fas fa-chart-bar"></i>
+                            <span>Reports</span>
+                        </a>
+                        <div id="collapseReports" class="collapse" aria-labelledby="headingReports" data-parent="#accordionSidebar">
+                            <div class="bg-white py-2 collapse-inner rounded">
 
-        </ul>
+                                <h6 class="collapse-header">Sales Summary</h6>
+                                <a class="collapse-item" href="@Url.Action("MonthlySalesSummary", "Report", new { groupBy = "Date" })">By Date</a>
+                                <a class="collapse-item" href="@Url.Action("SalesByMonthInYearSummary", "Report")">By Month</a>
+                                <a class="collapse-item" href="@Url.Action("MonthlySalesSummary", "Report", new { groupBy = "User" })">By Salesperson</a>
+                                <a class="collapse-item" href="@Url.Action("MonthlySalesSummary", "Report", new { groupBy = "Category" })">By Category</a>
+                                <a class="collapse-item" href="@Url.Action("MonthlySalesSummary", "Report", new { groupBy = "Product" })">By Product</a>
+                                <div class="dropdown-divider"></div>
+
+                                <h6 class="collapse-header">Products Summary</h6>
+                                <a class="collapse-item" href="@Url.Action("TopProducts", "Report")">Top Products Sold</a>
+                                <a class="collapse-item" href="@Url.Action("FastMovingProducts", "Report")">Fast Moving Products</a>
+                                <div class="dropdown-divider"></div>
+
+                                <h6 class="collapse-header">Stock Summary</h6>
+                                <a class="collapse-item" href="@Url.Action("ProductStockReport", "Report", new { lowStockOnly = false })">All Active Products</a>
+                                <a class="collapse-item" href="@Url.Action("ProductStockReport", "Report", new { lowStockOnly = true })">Low Stock Only</a>
+                                <a class="collapse-item" href="@Url.Action("DeadStock", "Report")">Dead Stock</a>
+                                <div class="dropdown-divider"></div>
+
+                                <h6 class="collapse-header">Profit Summary</h6>
+                                <a class="collapse-item" href="@Url.Action("MonthlyProfitSummary", "Report", new { groupBy = "Date" })">By Date</a>
+                                <a class="collapse-item" href="@Url.Action("ProfitByMonthInYearSummary", "Report")">By Month</a>
+                                <a class="collapse-item" href="@Url.Action("MonthlyProfitSummary", "Report", new { groupBy = "User" })">By Salesperson</a>
+                                <a class="collapse-item" href="@Url.Action("MonthlyProfitSummary", "Report", new { groupBy = "Category" })">By Category</a>
+                                <a class="collapse-item" href="@Url.Action("MonthlyProfitSummary", "Report", new { groupBy = "Product" })">By Product</a>
+
+                            </div>
+                        </div>
+                    </li>
+
+
+                }
+
+            </ul>
             <!-- End of Sidebar -->
         }
 
@@ -522,6 +524,38 @@
     <!-- Page level custom scripts -->
     <script src="~/Theme/js/demo/chart-area-demo.js"></script>
     <script src="~/Theme/js/demo/chart-pie-demo.js"></script>
+
+
+
+
+    <script>
+        let idleTimer, pingInterval;
+        const PING_EVERY_MS = 5 * 60 * 1000;
+
+        function startPing() {
+            if (!pingInterval) {
+                pingInterval = setInterval(() => {
+                    fetch('/KeepAlive/Ping'); // hits controller to keep session alive
+                }, PING_EVERY_MS);
+            }
+        }
+
+        function stopPing() {
+            clearInterval(pingInterval);
+            pingInterval = null;
+        }
+
+        ['mousemove', 'keydown', 'scroll', 'click'].forEach(event =>
+            document.addEventListener(event, () => {
+                clearTimeout(idleTimer);
+                startPing();
+                idleTimer = setTimeout(stopPing, 10 * 60 * 1000); // stop after 10 mins idle
+            })
+        );
+    </script>
+
+
+
     @RenderSection("scripts", required: false)
 </body>
 </html>

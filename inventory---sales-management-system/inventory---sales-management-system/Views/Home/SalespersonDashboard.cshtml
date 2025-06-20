@@ -1,0 +1,89 @@
+@model inventory___sales_management_system.ViewModels.Dashboard.SalespersonDashboardViewModel
+@{
+    ViewBag.Title = "Salesperson Dashboard";
+}
+
+<div class="d-flex justify-content-evenly mb-3">
+    <a href="@Url.Action("Create", "Sale")" class="btn btn-primary shadow-sm">
+        <i class="fas fa-plus fa-sm text-white-50"></i> New Sale
+    </a>
+</div>
+
+
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card border-left-info shadow h-100 py-2 px-3">
+            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Today’s Sale Count</div>
+            <div class="h4 font-weight-bold text-gray-800">@Model.TodaysSaleCount</div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2 px-3">
+            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Today’s Sale Total</div>
+            <div class="h4 font-weight-bold text-gray-800">$@Model.TodaysSaleTotal.ToString("N2")</div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card border-left-success shadow h-100 py-2 px-3 d-flex justify-content-between">
+            <div>
+                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">This Month’s Total Sales</div>
+                <div class="h4 font-weight-bold text-gray-800">$@Model.ThisMonthSaleTotal.ToString("N2")</div>
+            </div>
+            <div class="align-self-auto">
+                @{
+                    var isUp = Model.SaleGrowthPercent >= 0;
+                    var arrowClass = isUp ? "fa-caret-up text-success" : "fa-caret-down text-danger";
+                    var percent = Math.Abs(Model.SaleGrowthPercent).ToString("N1");
+                }
+                <span class="font-weight-bold">
+                    <i class="fas @arrowClass"></i> @percent%
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Weekly Trend Chart -->
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-secondary">Weekly Sales Trend</h6>
+    </div>
+    <div class="card-body" style="height: 300px;">
+        <canvas id="weeklySalesChart"></canvas>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            var labels = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Last7Days));
+            var data = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Last7DaysSales));
+
+            var ctx = document.getElementById('weeklySalesChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Sales ($)',
+                        data: data,
+                        backgroundColor: 'rgba(78, 115, 223, 0.5)',
+                        borderColor: 'rgba(78, 115, 223, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+}

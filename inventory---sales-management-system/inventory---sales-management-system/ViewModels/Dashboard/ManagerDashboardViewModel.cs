@@ -5,7 +5,7 @@ using System.Web;
 
 namespace inventory___sales_management_system.ViewModels.Dashboard
 {
-    public class DashboardViewModel
+    public class ManagerDashboardViewModel
     {
         // KPI Cards
         public decimal TodaysSales { get; set; }
@@ -38,6 +38,18 @@ namespace inventory___sales_management_system.ViewModels.Dashboard
 
         public string TopSalespersonName { get; set; }
         public decimal TopSalespersonTotal { get; set; }
+
+        public string MostProfitableProductName { get; set; }
+        public decimal MostProfitableProductAmount { get; set; }
+
+        public string MostLossProductName { get; set; }
+        public decimal MostLossProductAmount { get; set; }
+
+        public int TimeSinceLastSale { get; set; }
+
+        public string FastestMovingProductName { get; set; }
+        public double FastestMovingRate { get; set; }
+
     }
 
 

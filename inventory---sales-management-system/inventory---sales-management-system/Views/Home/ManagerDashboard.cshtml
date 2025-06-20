@@ -1,4 +1,4 @@
-﻿@model inventory___sales_management_system.ViewModels.Dashboard.DashboardViewModel
+﻿@model inventory___sales_management_system.ViewModels.Dashboard.ManagerDashboardViewModel
 @{
     ViewBag.Title = "Manager Dashboard";
 }
@@ -102,6 +102,38 @@
         </div>
     </div>
 </div>
+
+@*Final Cards*@
+<div class="row">
+    <div class="col-md-3 mb-4">
+        <div class="card border-left-success shadow h-100 py-2 px-3">
+            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Most Profitable Product</div>
+            <div class="h6 font-weight-bold text-gray-800">@Model.MostProfitableProductName</div>
+            <div class="small text-muted">+$@Model.MostProfitableProductAmount.ToString("N2")</div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-4">
+        <div class="card border-left-danger shadow h-100 py-2 px-3">
+            <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Biggest Loss Product</div>
+            <div class="h6 font-weight-bold text-gray-800">@Model.MostLossProductName</div>
+            <div class="small text-muted">-$@Math.Abs(Model.MostLossProductAmount).ToString("N2")</div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-4">
+        <div class="card border-left-warning shadow h-100 py-2 px-3">
+            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Time Since Last Sale</div>
+            <div class="h6 font-weight-bold text-gray-800">@Model.TimeSinceLastSale Hours</div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2 px-3">
+            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Fastest-Moving Product</div>
+            <div class="h6 font-weight-bold text-gray-800">@Model.FastestMovingProductName</div>
+            <div class="small text-muted">@Model.FastestMovingRate units/day</div>
+        </div>
+    </div>
+</div>
+
 
 
 

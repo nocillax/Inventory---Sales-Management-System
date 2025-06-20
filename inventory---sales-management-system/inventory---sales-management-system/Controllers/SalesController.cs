@@ -131,7 +131,10 @@ namespace inventory___sales_management_system.Controllers
         {
             var vm = new CreateSaleViewModel
             {
-                ProductsList = db.Products.Where(p => p.IsActive).ToList()
+                ProductsList = db.Products
+                .Where(p => p.IsActive)
+                .OrderBy(p => p.Name)
+                .ToList()
             };
             return View(vm);
         }

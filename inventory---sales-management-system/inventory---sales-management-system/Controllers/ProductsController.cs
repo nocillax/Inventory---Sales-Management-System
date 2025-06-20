@@ -20,29 +20,8 @@ namespace inventory___sales_management_system.Controllers
     {
         private ISMSDBContext db = new ISMSDBContext();
 
-        // GET: Products
-        //public ActionResult Index()
-        //{
-        //    var role = Session["UserRole"]?.ToString();
-        //    var products = db.Products.Include(p => p.Category);
 
-        //    if (role == "Salesperson")
-        //    {
-        //        products = products.Where(p => p.IsActive);
-        //    }
-
-        //    return View(products.ToList());
-        //}
-
-        public ActionResult Index(
-    int page = 1,
-    string sortBy = "Name",
-    string sortOrder = "asc",
-    string isActiveFilter = null,
-    string onSaleFilter = null,
-    decimal? minPrice = null,
-    decimal? maxPrice = null,
-    int? categoryFilter = null)
+        public ActionResult Index(int page = 1, string sortBy = "Name", string sortOrder = "asc", string isActiveFilter = null, string onSaleFilter = null, decimal? minPrice = null, decimal? maxPrice = null, int? categoryFilter = null)
         {
             int pageSize = 25;
             var role = Session["UserRole"]?.ToString();

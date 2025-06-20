@@ -1,0 +1,121 @@
+﻿@model List<inventory___sales_management_system.ViewModels.Report.FastMovingProductViewModel>
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    ViewBag.Title = "Fast-Moving Products";
+    int page = ViewBag.Page ?? 1;
+    int month = ViewBag.Month;
+    int year = ViewBag.Year;
+    string monthName = new DateTime(year, month, 1).ToString("MMMM yyyy");
+}
+
+<h2 class="mb-4 text-primary font-weight-bold">Fast-Moving Products – @monthName</h2>
+
+<div class="text-right mb-2">
+    <a class="btn btn-success"
+       href="@Url.Action("GenerateFastMovingProductsPdf", "Report", new { year = year, month = month })"
+       target="_blank">
+        <i class="fas fa-file-pdf"></i> Generate PDF
+    </a>
+</div>
+
+<div class="text-center mt-4">
+    <a class="btn btn-outline-secondary mr-2"
+       href="@Url.Action("FastMovingProducts", new { month = (month == 1 ? 12 : month - 1), year = (month == 1 ? year - 1 : year), page = 1 })">
+        ← Prev
+    </a>
+
+    @monthName
+
+    <a class="btn btn-outline-secondary ml-2"
+       href="@Url.Action("FastMovingProducts", new { month = (month == 12 ? 1 : month + 1), year = (month == 12 ? year + 1 : year), page = 1 })">
+        Next →
+    </a>
+</div>
+
+<table class="table mt-5">
+    <thead>
+        <tr>
+            <th>Product</th>
+            <th>Units/Day</th>
+            <th>Quantity Sold</th>
+            <th>Days Active</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (!Model.Any())
+        {
+            <tr><td colspan="4">No sales data found for this month.</td></tr>
+        }
+        else
+        {
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.ProductName</td>
+                    <td>@item.UnitsPerDay.ToString("F2")</td>
+                    <td>@item.QuantitySold</td>
+                    <td>@item.DaysActive</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+@if (ViewBag.TotalPages > 1)
+{
+    <nav>
+        <ul class="pagination justify-content-center mt-4">
+            @for (int i = 1; i <= ViewBag.TotalPages; i++)
+            {
+                <li class="page-item @(i == page ? "active" : "")">
+                    <a class="page-link" href="@Url.Action("FastMovingProducts", new {
+                        page = i,
+                        year = ViewBag.Year,
+                        month = ViewBag.Month
+                    })">@i</a>
+                </li>
+            }
+        </ul>
+    </nav>
+}
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            var labels = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.ChartLabels));
+            var data = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.ChartData));
+
+            var ctx = document.getElementById('fastMovingChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Units/Day',
+                        data: data,
+                        backgroundColor: 'rgba(28, 200, 138, 0.5)',
+                        borderColor: 'rgba(28, 200, 138, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    scales: {
+                        x: {
+                            beginAtZero: true
+                        },
+                        y: {
+                            ticks: {
+                                autoSkip: false
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+}

@@ -1,4 +1,4 @@
-﻿@model IEnumerable<inventory___sales_management_system.Models.User>
+﻿@model IEnumerable<inventory___sales_management_system.ViewModels.User.UserViewModel>
 
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -68,7 +68,7 @@
                 <tr>
                     <td>@user.Username</td>
                     <td>@user.Email</td>
-                    <td>@user.Role.ToString()</td>
+                    <td>@user.Role</td>
 
                     <td class="actions-column">
                         <div style="display: flex; gap: 10px; align-items: center; justify-content: flex-end">

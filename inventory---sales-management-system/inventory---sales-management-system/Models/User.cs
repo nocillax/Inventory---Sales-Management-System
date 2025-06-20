@@ -1,4 +1,5 @@
-﻿using System;
+﻿using inventory___sales_management_system.Enums;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -16,17 +17,10 @@ namespace inventory___sales_management_system.Models
         [Required, EmailAddress]
         public string Email { get; set; }
 
-        [Required]
         public string PasswordHash { get; set; }
 
         [Required]
         public UserRole Role { get; set; }
-
-        public enum UserRole
-        {
-            Manager = 1,
-            Salesperson = 2
-        }
 
         public virtual ICollection<Sale> Sales { get; set; }
     }

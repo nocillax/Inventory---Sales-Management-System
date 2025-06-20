@@ -162,7 +162,7 @@ namespace inventory___sales_management_system.Controllers
             return summary;
         }
 
-        private List<SalesSummaryViewModel> GetYearlySalesSummary(int year)
+        private List<SalesSummaryViewModel> GetSalesByMonthInYearSummary(int year)
         {
             var start = new DateTime(year, 1, 1);
             var end = start.AddYears(1);
@@ -311,6 +311,68 @@ namespace inventory___sales_management_system.Controllers
             return summary;
         }
 
+        private List<ProfitSummaryViewModel> GetProfitByMonthInYearSummary(int year)
+        {
+            var start = new DateTime(year, 1, 1);
+            var end = start.AddYears(1);
+
+            var profitData = db.SaleItems
+                .Where(si => si.Sale.Date >= start && si.Sale.Date < end)
+                .ToList();
+
+            var grouped = profitData
+                .GroupBy(si => si.Sale.Date.Month)
+                .Select(g => new ProfitSummaryViewModel
+                {
+                    GroupLabel = new DateTime(year, g.Key, 1).ToString("MMMM"),
+                    TotalProfit = g.Sum(x => (x.PriceAtSale - x.Product.Cost) * x.Quantity)
+                })
+                .ToList();
+
+            var fullYear = Enumerable.Range(1, 12)
+                .Select(m =>
+                {
+                    var found = grouped.FirstOrDefault(g => DateTime.ParseExact(g.GroupLabel, "MMMM", null).Month == m);
+                    return found ?? new ProfitSummaryViewModel
+                    {
+                        GroupLabel = new DateTime(year, m, 1).ToString("MMMM"),
+                        TotalProfit = 0
+                    };
+                }).ToList();
+
+            return fullYear;
+        }
+
+        private List<FastMovingProductViewModel> GetFastMovingProducts(int year, int month)
+        {
+            DateTime start = new DateTime(year, month, 1);
+            DateTime end = start.AddMonths(1);
+
+            var productSales = db.SaleItems
+                .Where(si => si.Sale.Date >= start && si.Sale.Date < end)
+                .GroupBy(si => new { si.Product.ProductId, si.Product.Name, si.Product.DateEdited })
+                .ToList()
+                .Select(g =>
+                {
+                    int daysActive = (int)Math.Max(1, (end - g.Key.DateEdited).TotalDays); // Avoid divide-by-zero
+                    int totalSold = g.Sum(x => x.Quantity);
+
+                    return new FastMovingProductViewModel
+                    {
+                        ProductName = g.Key.Name,
+                        QuantitySold = totalSold,
+                        DaysActive = daysActive,
+                        UnitsPerDay = Math.Round(totalSold / (double)daysActive, 2)
+                    };
+                })
+                .OrderByDescending(x => x.UnitsPerDay)
+                .ToList();
+
+            return productSales;
+        }
+
+
+
 
 
 
@@ -433,17 +495,17 @@ namespace inventory___sales_management_system.Controllers
         }
 
         [RoleAuthorize("Manager")]
-        public ActionResult YearlySalesSummary(int? year)
+        public ActionResult SalesByMonthInYearSummary(int? year)
         {
             int selectedYear = year ?? DateTime.Now.Year;
 
-            var summary = GetYearlySalesSummary(selectedYear);
+            var summary = GetSalesByMonthInYearSummary(selectedYear);
 
             ViewBag.Year = selectedYear;
             ViewBag.ChartLabels = summary.Select(s => s.GroupLabel).ToList();
             ViewBag.ChartData = summary.Select(s => s.TotalSales).ToList();
 
-            return View("YearlySalesSummary", summary);
+            return View("SalesByMonthInYearSummary", summary);
         }
 
         [RoleAuthorize("Manager")]
@@ -527,6 +589,44 @@ namespace inventory___sales_management_system.Controllers
 
             return View("MonthlyProfitSummary", pagedItems);
         }
+
+        [RoleAuthorize("Manager")]
+        public ActionResult ProfitByMonthInYearSummary(int? year)
+        {
+            int selectedYear = year ?? DateTime.Now.Year;
+
+            var summary = GetProfitByMonthInYearSummary(selectedYear);
+
+            ViewBag.Year = selectedYear;
+            ViewBag.ChartLabels = summary.Select(s => s.GroupLabel).ToList();
+            ViewBag.ChartData = summary.Select(s => s.TotalProfit).ToList();
+
+            return View("ProfitByMonthInYearSummary", summary);
+        }
+
+        [RoleAuthorize("Manager")]
+        public ActionResult FastMovingProducts(int? year, int? month, int page = 1)
+        {
+            int pageSize = 10;
+            int selectedYear = year ?? DateTime.Now.Year;
+            int selectedMonth = month ?? DateTime.Now.Month;
+
+            var summary = GetFastMovingProducts(selectedYear, selectedMonth);
+
+            var paged = summary
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            ViewBag.Page = page;
+            ViewBag.TotalPages = (int)Math.Ceiling((double)summary.Count / pageSize);
+            ViewBag.Year = selectedYear;
+            ViewBag.Month = selectedMonth;
+
+            return View("FastMovingProducts", paged);
+        }
+
+
 
 
 
@@ -620,12 +720,12 @@ namespace inventory___sales_management_system.Controllers
         }
 
         [RoleAuthorize("Manager")]
-        public ActionResult GenerateYearlySummaryPdf(int year)
+        public ActionResult GenerateSalesByMonthInYearSummaryPdf(int year)
         {
-            var summary = GetYearlySalesSummary(year);
+            var summary = GetSalesByMonthInYearSummary(year);
             ViewBag.Year = year;
 
-            return new Rotativa.ViewAsPdf("YearlySalesSummaryPdf", summary)
+            return new Rotativa.ViewAsPdf("SalesByMonthInYearSummaryPdf", summary)
             {
                 PageSize = Rotativa.Options.Size.A4,
                 PageOrientation = Rotativa.Options.Orientation.Portrait,
@@ -699,6 +799,50 @@ namespace inventory___sales_management_system.Controllers
                 })
             };
         }
+
+        [RoleAuthorize("Manager")]
+        public ActionResult GenerateProfitByMonthInYearSummaryPdf(int year)
+        {
+            var summary = GetProfitByMonthInYearSummary(year);
+            ViewBag.Year = year;
+
+            return new Rotativa.ViewAsPdf("ProfitByMonthInYearSummaryPdf", summary)
+            {
+                PageSize = Rotativa.Options.Size.A4,
+                PageOrientation = Rotativa.Options.Orientation.Portrait,
+                CustomSwitches = string.Join(" ", new[]
+                {
+                    $"--header-html \"{Url.Action("PdfHeader", "Report", null, Request.Url.Scheme)}\"",
+                    "--header-spacing 5",
+                    $"--footer-html \"{Url.Action("PdfFooter", "Report", null, Request.Url.Scheme)}\"",
+                    "--footer-spacing 10"
+                })
+            };
+        }
+
+        [RoleAuthorize("Manager")]
+        public ActionResult GenerateFastMovingProductsPdf(int year, int month)
+        {
+            var summary = GetFastMovingProducts(year, month);
+
+            ViewBag.Year = year;
+            ViewBag.Month = month;
+
+            return new Rotativa.ViewAsPdf("FastMovingProductsPdf", summary)
+            {
+                PageSize = Rotativa.Options.Size.A4,
+                PageOrientation = Rotativa.Options.Orientation.Portrait,
+                CustomSwitches = string.Join(" ", new[]
+                {
+            $"--header-html \"{Url.Action("PdfHeader", "Report", null, Request.Url.Scheme)}\"",
+            "--header-spacing 5",
+            $"--footer-html \"{Url.Action("PdfFooter", "Report", null, Request.Url.Scheme)}\"",
+            "--footer-spacing 10",
+            "--margin-bottom 20mm"
+        })
+            };
+        }
+
 
     }
 }

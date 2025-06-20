@@ -9,7 +9,7 @@
     int year = ViewBag.Year;
     string monthName = new DateTime(year, month, 1).ToString("MMMM yyyy");
 
-    string labelX = groupBy == "User" ? "Salesperson"
+    string labelX = groupBy == "User" ? "User"
             : groupBy == "Category" ? "Category"
             : groupBy == "Product" ? "Product"
             : "Date";
@@ -37,7 +37,7 @@
 </form>
 
 <div class="text-right mb-2">
-    <a class="btn btn-success" target="_blank" href="@Url.Action("GenerateMonthlySummaryPdf", "Report", new { year = year, month = month, groupBy = labelX, page = 1 })">
+    <a class="btn btn-success" target="_blank" href="@Url.Action("GenerateMonthlyProfitSummaryPdf", "Report", new { year = year, month = month, groupBy = labelX, page = 1 })">
         <i class="fas fa-file-pdf"></i> Generate PDF
     </a>
 </div>

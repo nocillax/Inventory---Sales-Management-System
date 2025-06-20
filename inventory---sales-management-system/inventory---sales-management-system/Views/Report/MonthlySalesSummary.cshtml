@@ -9,7 +9,7 @@
     int year = ViewBag.Year;
     string monthName = new DateTime(year, month, 1).ToString("MMMM yyyy");
 
-    string labelX = groupBy == "User" ? "Salesperson"
+    string labelX = groupBy == "User" ? "User"
             : groupBy == "Category" ? "Category"
             : groupBy == "Product" ? "Product"
             : "Date";

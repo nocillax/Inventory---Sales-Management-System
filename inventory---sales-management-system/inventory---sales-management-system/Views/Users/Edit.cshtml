@@ -1,4 +1,8 @@
-﻿@model inventory___sales_management_system.Models.User
+﻿@model inventory___sales_management_system.ViewModels.User.UserViewModel
+@using inventory___sales_management_system.Enums;
+
+
+
 
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -39,7 +43,11 @@
 
     <div class="form-group">
         @Html.LabelFor(m => m.Role)
-        @Html.DropDownListFor(m => m.Role, new SelectList(Enum.GetValues(typeof(inventory___sales_management_system.Models.User.UserRole))), "Select Role", new { @class = "form-control" })
+        @Html.DropDownListFor(
+            m => m.Role,
+            new SelectList(Enum.GetValues(typeof(UserRole))),
+            "Select Role",
+            new { @class = "form-control" })
         @Html.ValidationMessageFor(m => m.Role, "", new { @class = "text-danger" })
     </div>
 

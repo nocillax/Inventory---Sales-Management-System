@@ -1,0 +1,32 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Web;
+using inventory___sales_management_system.Enums;
+
+
+namespace inventory___sales_management_system.ViewModels.User
+{
+    public class UserViewModel
+    {
+        public int UserId { get; set; }
+
+        [Required]
+        public string Username { get; set; }
+
+        [Required, EmailAddress]
+        public string Email { get; set; }
+
+        public UserRole Role { get; set; }
+
+        [DataType(DataType.Password)]
+        public string Password { get; set; } 
+
+        [DataType(DataType.Password)]
+        [Compare("Password", ErrorMessage = "Passwords do not match.")]
+        public string ConfirmPassword { get; set; }
+    }
+
+}

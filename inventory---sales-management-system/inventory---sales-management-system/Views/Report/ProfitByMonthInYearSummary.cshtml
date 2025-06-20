@@ -1,34 +1,33 @@
-﻿@model List<inventory___sales_management_system.ViewModels.Report.SalesSummaryViewModel>
+﻿@model List<inventory___sales_management_system.ViewModels.Report.ProfitSummaryViewModel>
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
 
-    ViewBag.Title = "Yearly Sales Summary";
+    ViewBag.Title = "Monthly Profit in a Year Summary";
     int year = ViewBag.Year;
 }
 
-<h2 class="mb-4 text-primary font-weight-bold">Yearly Sales Summary – @year</h2>
-
+<h2 class="mb-4 text-primary font-weight-bold">Monthly Profit Summary In Year – @year</h2>
 
 <div class="text-right mb-2">
-    <a class="btn btn-success" target="_blank" href="@Url.Action("GenerateYearlySummaryPdf", "Report", new { year = year })">
+    <a class="btn btn-success" target="_blank" href="@Url.Action("GenerateProfitByMonthInYearSummaryPdf", "Report", new { year = year })">
         <i class="fas fa-file-pdf"></i> Generate PDF
     </a>
 </div>
 
 <div style="height: 400px;">
-    <canvas id="yearlyChart"></canvas>
+    <canvas id="yearlyProfitChart"></canvas>
 </div>
 
 <div class="text-center mt-4">
     <a class="btn btn-outline-secondary mr-2"
-       href="@Url.Action("YearlySalesSummary", "Report", new { year = year - 1 })">
+       href="@Url.Action("ProfitByMonthInYearSummary", "Report", new { year = year - 1 })">
         ← Prev
     </a>
 
     @year
 
     <a class="btn btn-outline-secondary ml-2"
-       href="@Url.Action("YearlySalesSummary", "Report", new { year = year + 1 })">
+       href="@Url.Action("ProfitByMonthInYearSummary", "Report", new { year = year + 1 })">
         Next →
     </a>
 </div>
@@ -37,13 +36,13 @@
     <thead>
         <tr>
             <th>Month</th>
-            <th>Total Sales ($)</th>
+            <th>Total Profit ($)</th>
         </tr>
     </thead>
     <tbody>
-        @if (Model.All(m => m.TotalSales == 0))
+        @if (Model.All(m => m.TotalProfit == 0))
         {
-            <tr><td colspan="2">No sales data found for this month.</td></tr>
+            <tr><td colspan="2">No profit data found for this year.</td></tr>
         }
         else
         {
@@ -51,15 +50,12 @@
             {
                 <tr>
                     <td>@item.GroupLabel</td>
-                    <td>@item.TotalSales.ToString("F2")</td>
+                    <td>@item.TotalProfit.ToString("F2")</td>
                 </tr>
             }
         }
-
     </tbody>
 </table>
-
-
 
 @section Scripts {
     <script>
@@ -67,15 +63,15 @@
             var labels = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.ChartLabels));
             var data = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.ChartData));
 
-            var ctx = document.getElementById('yearlyChart').getContext('2d');
+            var ctx = document.getElementById('yearlyProfitChart').getContext('2d');
             new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: labels,
                     datasets: [{
-                        label: 'Total Sales ($)',
+                        label: 'Total Profit ($)',
                         data: data,
-                        backgroundColor: 'rgba(78, 115, 223, 0.2)',
+                        backgroundColor: 'rgba(78, 115, 223, 0.5)',
                         borderColor: 'rgba(78, 115, 223, 1)',
                         borderWidth: 2,
                         tension: 0.3,
