@@ -5,32 +5,66 @@
     ViewBag.Title = "Add Stock for " + ViewBag.ProductName;
 }
 
-<h2 class="mb-4 text-primary" style="font-weight: bold">@ViewBag.Title</h2>
+<div class="container-fluid">
+    <h2 class="mb-4 text-primary font-weight-bold">@ViewBag.Title</h2>
 
-@using (Html.BeginForm("AddStock", "Products", FormMethod.Post))
-{
-    @Html.AntiForgeryToken()
+    @using (Html.BeginForm("AddStock", "Products", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(m => m.ProductId)
 
-    @Html.HiddenFor(m => m.ProductId)
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    <i class="fas fa-cart-plus mr-2"></i> Stock Entry Details
+                </h6>
+            </div>
+            <div class="card-body">
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-    <div class="form-group">
-        @Html.LabelFor(m => m.Supplier)
-        @Html.TextBoxFor(m => m.Supplier, new { @class = "form-control", placeholder = "Supplier Name" })
-        @Html.ValidationMessageFor(m => m.Supplier, "", new { @class = "text-danger" })
-    </div>
+                <div class="card mb-4">
+                    <div class="card-header bg-white border-bottom">
+                        <h6 class="font-weight-bold text-secondary mb-0">Supplier & Cost</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                @Html.LabelFor(m => m.Supplier)
+                                @Html.TextBoxFor(m => m.Supplier, new { @class = "form-control", placeholder = "Supplier Name" })
+                                @Html.ValidationMessageFor(m => m.Supplier, "", new { @class = "text-danger" })
+                            </div>
 
-    <div class="form-group">
-        @Html.LabelFor(m => m.CostPerQty, "Cost per Unit")
-        @Html.TextBoxFor(m => m.CostPerQty, new { @class = "form-control", placeholder = "e.g. 25.00" })
-        @Html.ValidationMessageFor(m => m.CostPerQty, "", new { @class = "text-danger" })
-    </div>
+                            <div class="form-group col-md-6">
+                                @Html.LabelFor(m => m.CostPerQty, "Cost per Unit")
+                                @Html.TextBoxFor(m => m.CostPerQty, new { @class = "form-control", placeholder = "e.g. 25.00" })
+                                @Html.ValidationMessageFor(m => m.CostPerQty, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-    <div class="form-group">
-        @Html.LabelFor(m => m.QuantityAdded, "Quantity to Add")
-        @Html.TextBoxFor(m => m.QuantityAdded, new { @class = "form-control", placeholder = "e.g. 100" })
-        @Html.ValidationMessageFor(m => m.QuantityAdded, "", new { @class = "text-danger" })
-    </div>
+                <div class="card mb-4">
+                    <div class="card-header bg-white border-bottom">
+                        <h6 class="font-weight-bold text-secondary mb-0">Quantity</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                @Html.LabelFor(m => m.QuantityAdded, "Quantity to Add")
+                                @Html.TextBoxFor(m => m.QuantityAdded, new { @class = "form-control", placeholder = "e.g. 100" })
+                                @Html.ValidationMessageFor(m => m.QuantityAdded, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-    <button type="submit" class="btn btn-primary">Add Stock</button>
-    @Html.ActionLink("Back to Product", "Details", "Products", new { id = Model.ProductId }, new { @class = "btn btn-secondary ml-2" })
-}
+                <div class="form-group mt-4">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-plus-circle mr-1"></i> Add Stock
+                    </button>
+                    @Html.ActionLink("Back to Product", "Details", "Products", new { id = Model.ProductId }, new { @class = "btn btn-secondary ml-2" })
+                </div>
+            </div>
+        </div>
+    }
+</div>

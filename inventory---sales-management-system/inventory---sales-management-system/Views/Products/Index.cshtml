@@ -13,9 +13,17 @@
 
 <style>
     th.actions-column, td.actions-column {
-        width: 150px; /* or desired fixed width */
-        white-space: nowrap; /* prevent wrapping */
+        width: 150px;
+        white-space: nowrap;
         text-align: center;
+    }
+
+    .clickable-row {
+        cursor: pointer;
+    }
+
+    .clickable-row:hover {
+            background-color: #f2f2f2;
     }
 </style>
 
@@ -23,9 +31,12 @@
 
 @if (role == "Manager")
 {
-    <p>
-        @Html.ActionLink("Add New Product", "Create", null, new { @class = "btn btn-primary" })
-    </p>
+
+    <div class="d-flex justify-content-evenly mb-3">
+        <a href="@Url.Action("Create", "Products")" class="btn btn-primary shadow-sm">
+            <i class="fas fa-plus fa-sm text-white-50"></i> New Product
+        </a>
+    </div>
 }
 
 @using (Html.BeginForm("Index", "Products", FormMethod.Get, new { @class = "form-inline mb-3" }))
@@ -76,7 +87,6 @@
 
 
 
-    @* Preserve sorting + pagination *@
     <input type="hidden" name="sortBy" value="@ViewBag.SortBy" />
     <input type="hidden" name="sortOrder" value="@ViewBag.SortOrder" />
 
@@ -89,7 +99,7 @@
     </div>
 }
 
-<table class="table">
+<table class="table mt-4">
     <tr>
         <th>
             <a href="@Url.Action("Index", new {
@@ -180,7 +190,7 @@
 
     @foreach (var item in Model)
     {
-        <tr>
+        <tr class="clickable-row" data-url="@Url.Action("Details", "Products", new { id = item.ProductId })">
             <td>
                 @Html.DisplayFor(modelItem => item.Category.Name)
             </td>
@@ -202,28 +212,29 @@
 
             @if (role == "Manager")
             {
-                <td style="text-align:center">
-                    @if (item.IsActive)
-                    {
-                        <span style="color:green; font-weight:bold;">Active</span>
-                    }
-                    else
-                    {
-                        <span style="color:red; font-weight:bold;">Inactive</span>
-                    }
+                <td style="text-align: center;">
+                    <a href="#" class="toggle-status" data-id="@item.ProductId" title="Toggle Status">
+                        <i class="fas @(item.IsActive ? "fa-toggle-on" : "fa-toggle-off")"
+                           style="color:@(item.IsActive ? "green" : "gray"); font-size: 1.5rem;"></i>
+                    </a>
                 </td>
 
+
                 <td class="actions-column">
-                    <div style="display: flex; gap: 10px; align-items: center; justify-content: flex-end">
-                        @Html.ActionLink("Edit", "Edit", new { id = item.ProductId }) |
-                        @Html.ActionLink("Details", "Details", new { id = item.ProductId }) |
+                    <div style="display: flex; gap: 10px; align-items: center; justify-content: center">
+
+                        <a href="@Url.Action("Edit", "Products", new { id = item.ProductId })" style="color: #4e73df" title="Edit">
+                            <i class="fas fa-edit"></i>
+                        </a>
+
                         @using (Html.BeginForm("Delete", "Products", new { id = item.ProductId }, FormMethod.Post, new { onsubmit = "return confirmDelete();" }))
                         {
                             @Html.AntiForgeryToken()
-                            <button type="submit" class="btn btn-link p-0 align-baseline" style="color: #dc3545;">
-                                Delete
+                            <button type="submit" style="color: #dc3545; border: none; background: none" title="Delete">
+                                <i class="fas fa-trash"></i>
                             </button>
                         }
+
                     </div>
                 </td>
             }
@@ -260,14 +271,39 @@
 
 @section Scripts {
     <script>
-        function confirmDelete() {
-            return confirm('Are you sure you want to delete this product?');
-        }
-        $(function () {
-            var message = '@TempData["DeleteMessage"]';
-            if (message) {
-                toastr.success(message);
+    function confirmDelete() {
+        return confirm('Are you sure you want to delete this product?');
+    }
+
+    $(function () {
+        $('.clickable-row').on('click', function (e) {
+            if (!$(e.target).is('a, button, i')) {
+                window.location = $(this).data('url');
             }
         });
+
+        $('.toggle-status').click(function (e) {
+            e.stopPropagation();
+            e.preventDefault();
+
+            const $icon = $(this).find('i');
+            const productId = $(this).data('id');
+
+            $.post('@Url.Action("ToggleActiveStatus", "Products")', { id: productId }, function (isActive) {
+                $icon
+                    .toggleClass('fa-toggle-on', isActive)
+                    .toggleClass('fa-toggle-off', !isActive)
+                    .css('color', isActive ? 'green' : 'gray');
+            }).fail(function () {
+                alert("Failed to toggle status.");
+            });
+        });
+
+        var message = '@TempData["DeleteMessage"]'.trim();
+        if (message) {
+            toastr.success(message);
+        }
+    });
     </script>
+
 }

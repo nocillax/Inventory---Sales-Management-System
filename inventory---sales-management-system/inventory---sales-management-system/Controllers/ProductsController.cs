@@ -140,8 +140,16 @@ namespace inventory___sales_management_system.Controllers
         {
             var vm = new CreateProductViewModel
             {
-                Categories = new SelectList(db.Categories, "CategoryId", "Name")
+                Categories = db.Categories
+                    .OrderBy(c => c.Name)
+                    .Select(c => new SelectListItem
+                    {
+                        Value = c.CategoryId.ToString(),
+                        Text = c.Name
+                    })
+                    .ToList()
             };
+
             return View(vm);
         }
 
@@ -171,7 +179,16 @@ namespace inventory___sales_management_system.Controllers
                 return RedirectToAction("Index");
             }
 
-            vm.Categories = new SelectList(db.Categories, "CategoryId", "Name", vm.CategoryId);
+            // refill sorted categories on error return
+            vm.Categories = db.Categories
+                .OrderBy(c => c.Name)
+                .Select(c => new SelectListItem
+                {
+                    Value = c.CategoryId.ToString(),
+                    Text = c.Name,
+                    Selected = (c.CategoryId == vm.CategoryId)
+                })
+                .ToList();
 
             return View(vm);
         }
@@ -195,7 +212,15 @@ namespace inventory___sales_management_system.Controllers
                 IsOnSale = product.IsOnSale,
                 DiscountPercent = product.DiscountPercent,
                 CategoryId = product.CategoryId,
-                Categories = new SelectList(db.Categories, "CategoryId", "Name", product.CategoryId)
+
+                Categories = db.Categories
+                    .OrderBy(c => c.Name)
+                    .Select(c => new SelectListItem
+                    {
+                        Value = c.CategoryId.ToString(),
+                        Text = c.Name
+                    })
+                    .ToList()
             };
 
             return View(vm);
@@ -228,7 +253,17 @@ namespace inventory___sales_management_system.Controllers
                 return RedirectToAction("Index");
             }
 
-            vm.Categories = new SelectList(db.Categories, "CategoryId", "Name", vm.CategoryId);
+            vm.Categories = db.Categories
+                .OrderBy(c => c.Name)
+                .Select(c => new SelectListItem
+                {
+                    Value = c.CategoryId.ToString(),
+                    Text = c.Name,
+                    Selected = (c.CategoryId == vm.CategoryId)
+                })
+                .ToList();
+
+
             return View(vm);
         }
 
@@ -344,6 +379,19 @@ namespace inventory___sales_management_system.Controllers
 
             return View(stockHistoryList);
         }
+
+        [HttpPost]
+        public JsonResult ToggleActiveStatus(int id)
+        {
+            var product = db.Products.Find(id);
+            if (product == null) return Json(false);
+
+            product.IsActive = !product.IsActive;
+            db.SaveChanges();
+
+            return Json(product.IsActive);
+        }
+
 
 
 

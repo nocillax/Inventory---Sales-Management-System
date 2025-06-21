@@ -5,71 +5,92 @@
     ViewBag.Title = "Sale Details";
 }
 
-<h2 class="mb-4 text-primary" style="font-weight: bold">Sale Details</h2>
+<div class="container-fluid">
+    <h2 class="mb-4 text-primary font-weight-bold">Sale Details</h2>
 
-<div>
-    <h4>Sale Info</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>@Html.DisplayNameFor(m => m.SalesPersonName)</dt>
-        <dd>@Html.DisplayFor(m => m.SalesPersonName)</dd>
+    <div class="text-right mb-2">
+        <a class="btn btn-success" target="_blank" href="@Url.Action("Invoice", "Sales", new { id = Model.SaleId })">
+            <i class="fas fa-file-pdf mr-1"></i> Generate Invoice
+        </a>
+    </div>
 
-        <dt>@Html.DisplayNameFor(m => m.Date)</dt>
-        <dd>@Html.DisplayFor(m => m.Date)</dd>
+    <div class="card mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">
+                <i class="fas fa-info-circle mr-2"></i> Sale Info
+            </h6>
+        </div>
+        <div class="card-body">
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label class="text-muted">Salesperson</label>
+                    <div class="font-weight-bold">@Html.DisplayFor(m => m.SalesPersonName)</div>
+                </div>
+                <div class="col-md-4">
+                    <label class="text-muted">Date</label>
+                    <div class="font-weight-bold">@Html.DisplayFor(m => m.Date)</div>
+                </div>
+                <div class="col-md-4">
+                    <label class="text-muted">Buyer</label>
+                    <div class="font-weight-bold">@Html.DisplayFor(m => m.BuyerName)</div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        <dt>@Html.DisplayNameFor(m => m.BuyerName)</dt>
-        <dd>@Html.DisplayFor(m => m.BuyerName)</dd>
-    </dl>
-</div>
+    <!-- Sold Items Table -->
+    <div class="card mb-4">
+        <div class="card-header bg-white border-bottom">
+            <h6 class="font-weight-bold text-secondary mb-0">
+                <i class="fas fa-boxes mr-2"></i> Items Sold
+            </h6>
+        </div>
+        <div class="card-body p-0">
+            <table class="table table-bordered m-0">
+                <thead class="thead-light">
+                    <tr>
+                        <th>Product Name</th>
+                        <th>Quantity</th>
+                        <th>Regular Price</th>
+                        <th>Discount</th>
+                        <th>Price</th>
+                        <th>Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.SaleItems)
+                    {
+                        <tr>
+                            <td>@(item.ProductName ?? "N/A")</td>
+                            <td>@item.Quantity</td>
+                            <td>@item.RegularPrice.ToString("C")</td>
+                            <td>@(item.DiscountPercent.HasValue ? item.DiscountPercent.Value.ToString("F2") + "%" : "-")</td>
+                            <td>@item.PriceAtSale.ToString("C")</td>
+                            <td>@item.Subtotal.ToString("C")</td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="5" class="text-right font-weight-bold">Total:</td>
+                        <td><strong>@Model.TotalAmount.ToString("C")</strong></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
 
-<h4>Items Sold</h4>
-<table class="table table-bordered table-striped">
-    <thead>
-        <tr>
-            <th>Product Name</th>
-            <th>Quantity</th>
-            <th>Regular Price</th>
-            <th>Discount</th>
-            <th>Price</th>
-            <th>Subtotal</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model.SaleItems)
-        {
-            <tr>
-                <td>@(item.ProductName ?? "N/A")</td>
-                <td>@item.Quantity</td>
-                <td>@item.RegularPrice.ToString("C")</td>
-                <td>@(item.DiscountPercent.HasValue ? item.DiscountPercent.Value.ToString("F2") + "%" : "-")</td>
-                <td>@item.PriceAtSale.ToString("C")</td>
-                <td>@item.Subtotal.ToString("C")</td>
-            </tr>
-        }
-    </tbody>
-    <tfoot>
-        <tr>
-            <td colspan="5" class="text-right"><strong>Total:</strong></td>
-            <td><strong>@Model.TotalAmount.ToString("C")</strong></td>
-        </tr>
-    </tfoot>
-</table>
-
-
-<div style="display: flex; justify-content:space-between">
-    <a class="btn btn-secondary" href="@Url.Action("Index", "Sales")">
-        Back to List
-    </a>
-
-
-    <a class="btn btn-success" target="_blank" href="@Url.Action("Invoice", "Sales", new { id = Model.SaleId })">
-        <i class="fas fa-file-pdf"></i> Generate Invoice
-    </a>
+    <!-- Actions -->
+    <div class="d-flex justify-content-between">
+        <a class="btn btn-secondary" href="@Url.Action("Index", "Sales")">
+            Back to List
+        </a>
+    </div>
 </div>
 
 @section Scripts {
     <script>
-        $(function() {
+        $(function () {
             var saleCreated = '@TempData["SaleCreated"]';
             var saleId = '@TempData["SaleId"]';
 
@@ -89,6 +110,3 @@
         });
     </script>
 }
-
-
-

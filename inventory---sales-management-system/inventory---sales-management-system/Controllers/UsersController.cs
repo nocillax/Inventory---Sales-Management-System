@@ -1,5 +1,4 @@
 ﻿using inventory___sales_management_system.Attributes;
-using inventory___sales_management_system.Context;
 using inventory___sales_management_system.Enums;
 using inventory___sales_management_system.Models;
 using inventory___sales_management_system.ViewModels.User;
@@ -74,9 +73,14 @@ namespace inventory___sales_management_system.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(UserViewModel userVM, string ConfirmPassword)
         {
-            if (HashPassword(userVM.Password) == null || ConfirmPassword == null || HashPassword(userVM.Password) != ConfirmPassword)
+           
+            if (string.IsNullOrEmpty(userVM.Password) || string.IsNullOrEmpty(ConfirmPassword))
             {
-                ModelState.AddModelError("PasswordHash", "Passwords do not match.");
+                ModelState.AddModelError("Password", "Password and confirmation are required.");
+            }
+            else if (userVM.Password != ConfirmPassword)
+            {
+                ModelState.AddModelError("ConfirmPassword", "Passwords do not match.");
             }
 
             if (!ModelState.IsValid)
@@ -85,23 +89,26 @@ namespace inventory___sales_management_system.Controllers
                 return View(userVM);
             }
 
+            
             var user = new User
             {
                 Username = userVM.Username,
                 Email = userVM.Email,
-                PasswordHash = HashPassword(userVM.Password),
+                PasswordHash = userVM.Password,
                 Role = userVM.Role
             };
 
+            
             using (var client = new HttpClient())
             {
                 client.BaseAddress = new Uri("http://localhost:58370/");
                 var url = $"api/users?confirmPassword={ConfirmPassword}";
+
                 var response = await client.PostAsJsonAsync(url, user);
 
                 if (response.IsSuccessStatusCode)
                 {
-                    TempData["Message"] = "User created via API successfully!";
+                    TempData["CreateMessage"] = "User created successfully!";
                     return RedirectToAction("Index");
                 }
                 else
@@ -114,6 +121,7 @@ namespace inventory___sales_management_system.Controllers
             ViewBag.Roles = new SelectList(Enum.GetValues(typeof(UserRole)), userVM.Role);
             return View(userVM);
         }
+
 
         public async Task<ActionResult> Details(int id)
         {
@@ -157,6 +165,8 @@ namespace inventory___sales_management_system.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     user = await response.Content.ReadAsAsync<UserViewModel>();
+                    TempData["EditMessage"] = "User updated successfully!";
+
                 }
                 else if (response.StatusCode == HttpStatusCode.NotFound)
                 {
@@ -181,6 +191,7 @@ namespace inventory___sales_management_system.Controllers
             {
                 ModelState.AddModelError("ConfirmPassword", "Passwords do not match.");
             }
+
 
             if (!ModelState.IsValid)
             {

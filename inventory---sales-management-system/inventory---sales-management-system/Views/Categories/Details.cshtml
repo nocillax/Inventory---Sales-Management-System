@@ -2,26 +2,32 @@
 
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
-    ViewBag.Title = "Details";
+    ViewBag.Title = "Category Details";
 }
 
-<h2 class="mb-4 text-primary" style="font-weight: bold">Details</h2>
+<div class="container-fluid">
+    <h2 class="mb-4 text-primary font-weight-bold">Category Details</h2>
 
-<div>
-    <h4>Category</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+            <h6 class="m-0 font-weight-bold text-primary">
+                <i class="fas fa-folder-open mr-2"></i> Category Info
+            </h6>
+        </div>
+        <div class="card-body">
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label class="text-muted">Name</label>
+                    <div class="font-weight-bold text-dark">
+                        @Html.DisplayFor(m => m.Name)
+                    </div>
+                </div>
+            </div>
 
-        <dd>
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-
-    </dl>
+            <div class="mt-4">
+                @Html.ActionLink("Edit", "Edit", new { id = Model.CategoryId }, new { @class = "btn btn-primary mr-2" })
+                @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-secondary" })
+            </div>
+        </div>
+    </div>
 </div>
-<p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.CategoryId }) |
-    @Html.ActionLink("Back to List", "Index")
-</p>

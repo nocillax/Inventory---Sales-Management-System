@@ -10,6 +10,17 @@
     : "";
 }
 
+<style>
+    .clickable-row {
+        cursor: pointer;
+    }
+
+    .clickable-row:hover {
+            background-color: #f2f2f2;
+    }
+
+</style>
+
 <h2 class="mb-4 text-primary font-weight-bold">
     @(role == "Manager" ? "Sales History" : "My Sales History")
 </h2>
@@ -22,7 +33,7 @@
     <label class="mr-2">To:</label>
     <input type="date" name="endDate" class="form-control mr-3" value="@ViewBag.EndDate" />
 
-    <button type="submit" class="btn btn-primary">Filter</button>
+    <button type="submit" class="btn btn-primary "><i class="fas fa-filter"></i></button>
 </form>
 
 @if (!ViewData.ModelState.IsValid)
@@ -67,14 +78,12 @@
                 @(ViewBag.SortBy == "TotalAmount" ? (ViewBag.SortOrder == "asc" ? " ▲" : " ▼") : "")
             </a>
         </th>
-        <th>
-            Action
-        </th>
+        
     </tr>
 
     @foreach (var item in Model)
     {
-        <tr>
+        <tr class="clickable-row" data-url="@Url.Action("Details", "Sales", new { id = item.SaleId })">
             <td>
                 @Html.DisplayFor(modelItem => item.Date)
             </td>
@@ -92,9 +101,7 @@
             <td>
                 @Html.DisplayFor(modelItem => item.TotalAmount)
             </td>
-            <td>
-                @Html.ActionLink("Details", "Details", new { id = item.SaleId })
-            </td>
+
         </tr>
     }
 
@@ -121,3 +128,21 @@
 }
 
 
+
+
+@section Scripts {
+    <script>
+
+    $(function () {
+        $('.clickable-row').on('click', function (e) {
+            if (!$(e.target).is('a, button, i')) {
+                window.location = $(this).data('url');
+            }
+        });
+
+    });
+
+
+    </script>
+
+}

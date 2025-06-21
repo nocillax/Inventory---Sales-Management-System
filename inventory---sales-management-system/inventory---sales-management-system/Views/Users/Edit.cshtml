@@ -1,56 +1,71 @@
 ﻿@model inventory___sales_management_system.ViewModels.User.UserViewModel
 @using inventory___sales_management_system.Enums;
 
-
-
-
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewBag.Title = "Edit User";
 }
 
-<h2 class="mb-4 text-primary" style="font-weight: bold">Edit User</h2>
+<div class="container-fluid">
+    <h2 class="mb-4 text-primary font-weight-bold">Edit User</h2>
 
-@using (Html.BeginForm())
-{
-    @Html.AntiForgeryToken()
-    @Html.HiddenFor(m => m.UserId)
-    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(m => m.UserId)
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    <i class="fas fa-user-edit mr-2"></i> User Information
+                </h6>
+            </div>
+            <div class="card-body">
 
-    <div class="form-group">
-        @Html.LabelFor(m => m.Username)
-        @Html.TextBoxFor(m => m.Username, new { @class = "form-control" })
-        @Html.ValidationMessageFor(m => m.Username, "", new { @class = "text-danger" })
-    </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        @Html.LabelFor(m => m.Username)
+                        @Html.TextBoxFor(m => m.Username, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.Username, "", new { @class = "text-danger" })
+                    </div>
 
-    <div class="form-group">
-        @Html.LabelFor(m => m.Email)
-        @Html.TextBoxFor(m => m.Email, new { @class = "form-control", type = "email" })
-        @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
-    </div>
+                    <div class="form-group col-md-6">
+                        @Html.LabelFor(m => m.Email)
+                        @Html.TextBoxFor(m => m.Email, new { @class = "form-control", type = "email" })
+                        @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+                    </div>
+                </div>
 
-    <div class="form-group">
-        <label>New Password (leave blank to keep existing)</label>
-        <input type="password" name="NewPassword" class="form-control" />
-    </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label>New Password</label>
+                        <input type="password" name="NewPassword" class="form-control" placeholder="(Leave blank to keep existing)" />
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label>Confirm New Password</label>
+                        <input type="password" name="ConfirmPassword" class="form-control" />
+                        @Html.ValidationMessage("ConfirmPassword", "", new { @class = "text-danger" })
+                    </div>
+                </div>
 
-    <div class="form-group">
-        <label>Confirm New Password</label>
-        <input type="password" name="ConfirmPassword" class="form-control" />
-        @Html.ValidationMessage("ConfirmPassword", "", new { @class = "text-danger" })
-    </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Role)
+                    @Html.DropDownListFor(
+                        m => m.Role,
+                        new SelectList(Enum.GetValues(typeof(UserRole))),
+                        "Select Role",
+                        new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.Role, "", new { @class = "text-danger" })
+                </div>
 
-    <div class="form-group">
-        @Html.LabelFor(m => m.Role)
-        @Html.DropDownListFor(
-            m => m.Role,
-            new SelectList(Enum.GetValues(typeof(UserRole))),
-            "Select Role",
-            new { @class = "form-control" })
-        @Html.ValidationMessageFor(m => m.Role, "", new { @class = "text-danger" })
-    </div>
-
-    <button type="submit" class="btn btn-primary">Save</button>
-    @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-secondary ml-2" })
-}
+                <div class="form-group mt-4">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save mr-1"></i> Save
+                    </button>
+                    @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-secondary ml-2" })
+                </div>
+            </div>
+        </div>
+    }
+</div>

@@ -1,114 +1,151 @@
 ﻿@model inventory___sales_management_system.ViewModels.Sale.CreateSaleViewModel
 
 @{
+    Layout = "~/Views/Shared/_Layout.cshtml";
     ViewBag.Title = "Create Sale";
 }
 
 
-    <style>
-        .select2-container .select2-selection--single {
-            height: 38px !important; /* match Bootstrap .form-control height */
-            padding: 6px 12px;
-            border: 1px solid #ced4da; /* match Bootstrap border */
-            border-radius: 4px;
+<style>
+    .select2-container .select2-selection--single {
+        height: 38px !important; /* match Bootstrap .form-control height */
+        padding: 6px 12px;
+        border: 1px solid #ced4da; /* match Bootstrap border */
+        border-radius: 4px;
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        line-height: 24px;
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        height: 36px;
+    }
+
+    .select2-container--default .select2-search--dropdown .select2-search__field {
+        border: 1px solid #ced4da; /* lighter border like Bootstrap */
+        padding: 6px 10px;
+        border-radius: 4px;
+        outline: none;
+        box-shadow: none;
+    }
+
+        .select2-container--default .select2-search--dropdown .select2-search__field:focus {
+            border-color: #80bdff;
+            box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25); /* mimic Bootstrap focus */
         }
-
-        .select2-container--default .select2-selection--single .select2-selection__rendered {
-            line-height: 24px;
-        }
-
-        .select2-container--default .select2-selection--single .select2-selection__arrow {
-            height: 36px;
-        }
-
-        .select2-container--default .select2-search--dropdown .select2-search__field {
-            border: 1px solid #ced4da; /* lighter border like Bootstrap */
-            padding: 6px 10px;
-            border-radius: 4px;
-            outline: none;
-            box-shadow: none;
-        }
-
-            .select2-container--default .select2-search--dropdown .select2-search__field:focus {
-                border-color: #80bdff;
-                box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25); /* mimic Bootstrap focus */
-            }
-    </style>
+</style>
 
 
-<h2>Create Sale</h2>
+<div class="container-fluid">
+    <h2 class="mb-4 text-primary font-weight-bold">Create Sale</h2>
 
-@using (Html.BeginForm())
-{
-    @Html.AntiForgeryToken()
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
 
-    <div>
-        @Html.LabelFor(m => m.Date)
-        @Html.TextBoxFor(m => m.Date, "{0:yyyy-MM-ddTHH:mm}", new { type = "datetime-local", @class = "form-control" })
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    <i class="fas fa-shopping-cart mr-2"></i> Sale Details
+                </h6>
+            </div>
+            <div class="card-body">
 
-    </div>
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-    <div>
-        @Html.LabelFor(m => m.BuyerName)
-        @Html.TextBoxFor(m => m.BuyerName, new { @class = "form-control" })
-        @Html.ValidationMessageFor(m => m.BuyerName)
-    </div>
+                <!-- BUYER INFO + DATE -->
+                <div class="card mb-4">
+                    <div class="card-header bg-white border-bottom">
+                        <h6 class="font-weight-bold text-secondary mb-0">Sale Info</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                @Html.LabelFor(m => m.BuyerName)
+                                @Html.TextBoxFor(m => m.BuyerName, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.BuyerName, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="form-group col-md-6">
+                                @Html.LabelFor(m => m.Date)
+                                @Html.TextBoxFor(m => m.Date, "{0:yyyy-MM-ddTHH:mm}", new { type = "datetime-local", @class = "form-control" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-    <hr />
+                <!-- PRODUCT SELECTION -->
+                <div class="card mb-4">
+                    <div class="card-header bg-white border-bottom">
+                        <h6 class="font-weight-bold text-secondary mb-0">Add Products</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-row align-items-end">
+                            <div class="form-group col-md-6">
+                                <label for="productSelect">Select Product</label>
+                                <select id="productSelect" class="form-control select2">
+                                    <option value="">-- Select Product --</option>
+                                    @foreach (var p in Model.ProductsList)
+                                    {
+                                        <option value="@p.ProductId"
+                                                data-price="@p.Price"
+                                                data-stock="@p.QuantityAvailable"
+                                                data-name="@p.Name"
+                                                data-ison="@p.IsOnSale"
+                                                data-discount="@p.DiscountPercent">
+                                            @p.Name
+                                        </option>
+                                    }
+                                </select>
+                            </div>
 
-    <div>
-        <label for="productSelect">Select Product</label>
+                            <div class="form-group col-md-2">
+                                <label>Quantity</label>
+                                <input type="number" id="qtyInput" value="1" min="1" class="form-control" />
+                            </div>
 
-        <select id="productSelect" class="form-control select2">
-            <option value="">-- Select Product --</option>
-            @foreach (var p in Model.ProductsList)
-            {
-                <option value="@p.ProductId"
-                        data-price="@p.Price"
-                        data-stock="@p.QuantityAvailable"
-                        data-name="@p.Name">
-                    @p.Name
-                </option>
-            }
-        </select>
+                            <div class="form-group col-md-2">
+                                <button type="button" id="addProductBtn" class="btn btn-success btn-block">
+                                    <i class="fas fa-plus-circle mr-1"></i> Add
+                                </button>
+                            </div>
+                        </div>
 
+                        <table class="table table-bordered mt-4" id="productsTable" style="display:none;">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>Product Name</th>
+                                    <th>Quantity</th>
+                                    <th>Regular Price</th>
+                                    <th>Discount</th>
+                                    <th>Price</th>
+                                    <th>Subtotal</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="5" class="text-right font-weight-bold">Total:</td>
+                                    <td><span id="totalAmount">0.00</span></td>
+                                    <td></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
 
-        <label>Quantity</label>
-        <input type="number" id="qtyInput" value="1" min="1" class="form-control" style="width: 100px;" />
-
-        <button type="button" id="addProductBtn" class="btn btn-success mt-2">Add Product</button>
-
-    </div>
-
-    <hr />
-
-    <table class="table" id="productsTable" style="display:none;">
-        <thead>
-            <tr>
-                <th>Product Name</th>
-                <th>Quantity</th>
-                <th>Regular Price</th>
-                <th>Discount</th>
-                <th>Price</th>
-                <th>Subtotal</th>
-
-            </tr>
-        </thead>
-        <tbody>
-            <!-- rows added here by JS -->
-        </tbody>
-        <tfoot>
-            <tr>
-                <td colspan="3" style="text-align:right"><strong>Total:</strong></td>
-                <td><span id="totalAmount">0.00</span></td>
-                <td></td>
-            </tr>
-        </tfoot>
-    </table>
-
-    <input type="submit" value="Create Sale" class="btn btn-primary mt-3" />
-}
-
+                <!-- SUBMIT -->
+                <div class="form-group mt-4">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-check-circle mr-1"></i> Confirm Sale
+                    </button>
+                    @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-secondary ml-2" })
+                </div>
+            </div>
+        </div>
+    }
+</div>
 
 
 
@@ -162,6 +199,7 @@
                 </text>
             }
         };
+
 
         const productsTable = document.getElementById('productsTable');
         const tbody = productsTable.querySelector('tbody');
