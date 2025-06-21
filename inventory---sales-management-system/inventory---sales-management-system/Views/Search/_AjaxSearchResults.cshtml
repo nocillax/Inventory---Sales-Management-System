@@ -1,0 +1,46 @@
+﻿@model inventory___sales_management_system.ViewModels.Search.GlobalSearchViewModel
+
+@if (Model.Products.Any())
+{
+    <div class="search-section-card">
+        <div class="search-section-title">📦 Products</div>
+        <ul class="list-unstyled mb-1">
+            @foreach (var p in Model.Products)
+            {
+                <li class="search-result-item">
+                    <a href="@Url.Action("Details", "Products", new { id = p.ProductId })">@p.Name</a>
+                </li>
+            }
+        </ul>
+    </div>
+}
+
+@if (Model.Categories.Any())
+{
+    <div class="search-section-card">
+        <div class="search-section-title">🗂 Categories</div>
+        <ul class="list-unstyled mb-1">
+            @foreach (var c in Model.Categories)
+            {
+                <li class="search-result-item">
+                    <a href="@Url.Action("Details", "Categories", new { id = c.CategoryId })">@c.Name</a>
+                </li>
+            }
+        </ul>
+    </div>
+}
+
+@if (Model.Users.Any())
+{
+    <div class="search-section-card">
+        <div class="search-section-title">👤 Users</div>
+        <ul class="list-unstyled mb-1">
+            @foreach (var u in Model.Users)
+            {
+                <li class="search-result-item">
+                    <a href="@Url.Action("Edit", "Users", new { id = u.UserId })">@u.Username</a>
+                </li>
+            }
+        </ul>
+    </div>
+}

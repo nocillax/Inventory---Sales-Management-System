@@ -9,6 +9,8 @@
 <div class="container-fluid">
     <h2 class="mb-4 text-primary font-weight-bold">Edit User</h2>
 
+
+
     @using (Html.BeginForm())
     {
         @Html.AntiForgeryToken()
@@ -40,11 +42,30 @@
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label>New Password</label>
-                        <input type="password" name="NewPassword" class="form-control" placeholder="(Leave blank to keep existing)" />
+                        <input type="password" name="Password"
+                               class="form-control"
+                               placeholder="(Leave blank to keep existing)"
+                               data-val="true"
+                               data-val-minlength="Password must be at least 6 characters long."
+                               data-val-minlength-min="6"
+                               data-val-regex="Password must contain at least one letter and one number."
+                               data-val-regex-pattern="^(?=.*[A-Za-z])(?=.*\d).+$" />
+
+                        <span class="text-danger field-validation-valid" 
+                              data-valmsg-for="Password" 
+                              data-valmsg-replace="true"></span>
                     </div>
                     <div class="form-group col-md-6">
                         <label>Confirm New Password</label>
-                        <input type="password" name="ConfirmPassword" class="form-control" />
+                        <input type="password" name="ConfirmPassword"
+                               class="form-control"
+                               data-val="true"
+                               data-val-equalto="Passwords do not match."
+                               data-val-equalto-other="*.Password" />
+
+                        <span class="text-danger field-validation-valid"
+                              data-valmsg-for="ConfirmPassword"
+                              data-valmsg-replace="true"></span>
                         @Html.ValidationMessage("ConfirmPassword", "", new { @class = "text-danger" })
                     </div>
                 </div>
@@ -68,4 +89,10 @@
             </div>
         </div>
     }
+
 </div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+

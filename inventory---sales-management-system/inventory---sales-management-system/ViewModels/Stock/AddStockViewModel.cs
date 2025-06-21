@@ -10,13 +10,16 @@ namespace inventory___sales_management_system.ViewModels.Stock
     {
         public int ProductId { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Supplier Name is Required")]
+        [StringLength(100, ErrorMessage = "Supplier name cannot exceed 100 characters")]
         public string Supplier { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Cost per Unit is required")]
+        [Range(0, double.MaxValue, ErrorMessage = "Cost must be non-negative")]
         public decimal CostPerQty { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Quantity is required")]
+        [Range(0, double.MaxValue, ErrorMessage = "Quantity must be non-negative")]
         public int QuantityAdded { get; set; }
     }
 

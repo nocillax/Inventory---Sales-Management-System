@@ -170,6 +170,7 @@
     <Compile Include="Controllers\ProductsController.cs" />
     <Compile Include="Controllers\ReportController.cs" />
     <Compile Include="Controllers\SalesController.cs" />
+    <Compile Include="Controllers\SearchController.cs" />
     <Compile Include="Controllers\UsersApiController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Enums\UserRole.cs" />
@@ -239,6 +240,7 @@
     <Compile Include="ViewModels\Sale\CreateSaleViewModel.cs" />
     <Compile Include="ViewModels\Sale\SaleDetailsViewModel.cs" />
     <Compile Include="ViewModels\Sale\SaleHistoryViewModel.cs" />
+    <Compile Include="ViewModels\Search\GlobalSearchViewModel.cs" />
     <Compile Include="ViewModels\Stock\AddStockViewModel.cs" />
     <Compile Include="ViewModels\Stock\StockHistoryViewModel.cs" />
     <Compile Include="ViewModels\User\UserViewModel.cs" />
@@ -266,6 +268,7 @@
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
     <Content Include="Logo\nocillax-logo-blue-bg.svg" />
+    <Content Include="Logo\nocillax-logo.svg" />
     <Content Include="Logo\nocillax-typo.svg" />
     <Content Include="Logo\NX logo.png" />
     <Content Include="Logo\NX-Logo-Bg-removed-cropped.svg" />
@@ -966,6 +969,7 @@
     <Content Include="Views\Report\ProfitByMonthInYearSummaryPdf.cshtml" />
     <Content Include="Views\Report\FastMovingProducts.cshtml" />
     <Content Include="Views\Report\FastMovingProductsPdf.cshtml" />
+    <Content Include="Views\Search\_AjaxSearchResults.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

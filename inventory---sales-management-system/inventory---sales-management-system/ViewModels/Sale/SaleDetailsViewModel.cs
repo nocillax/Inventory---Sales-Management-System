@@ -12,7 +12,7 @@ namespace inventory___sales_management_system.ViewModels.Sale
 
         [Display(Name = "Salesperson")]
         public string SalesPersonName { get; set; }
-
+        
         public DateTime Date { get; set; }
 
         public string BuyerName { get; set; }

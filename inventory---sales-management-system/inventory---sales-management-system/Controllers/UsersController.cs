@@ -165,7 +165,7 @@ namespace inventory___sales_management_system.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     user = await response.Content.ReadAsAsync<UserViewModel>();
-                    TempData["EditMessage"] = "User updated successfully!";
+                    
 
                 }
                 else if (response.StatusCode == HttpStatusCode.NotFound)
@@ -190,6 +190,20 @@ namespace inventory___sales_management_system.Controllers
             if (!string.IsNullOrEmpty(NewPassword) && NewPassword != ConfirmPassword)
             {
                 ModelState.AddModelError("ConfirmPassword", "Passwords do not match.");
+            }
+
+            // Password format validation
+            if (!string.IsNullOrEmpty(NewPassword))
+            {
+                if (NewPassword.Length < 6)
+                {
+                    ModelState.AddModelError("NewPassword", "Password must be at least 6 characters long.");
+                }
+
+                if (!System.Text.RegularExpressions.Regex.IsMatch(NewPassword, @"^(?=.*[A-Za-z])(?=.*\d).+$"))
+                {
+                    ModelState.AddModelError("NewPassword", "Password must contain at least one letter and one number.");
+                }
             }
 
 
@@ -245,7 +259,7 @@ namespace inventory___sales_management_system.Controllers
                 }
             }
 
-            TempData["Message"] = "User updated successfully!";
+            TempData["EditMessage"] = "User updated successfully!";
             return RedirectToAction("Index");
         }
 

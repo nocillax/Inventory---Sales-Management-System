@@ -5,22 +5,44 @@
     ViewBag.Title = "User Details";
 }
 
-<h2 class="mb-4 text-primary" style="font-weight: bold">User Details</h2>
+<div class="container-fluid">
+    <h2 class="mb-4 text-primary font-weight-bold">User Details</h2>
 
-<div>
-    <dl class="dl-horizontal">
-        <dt>@Html.DisplayNameFor(m => m.Username)</dt>
-        <dd>@Html.DisplayFor(m => m.Username)</dd>
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+            <h6 class="m-0 font-weight-bold text-primary">
+                <i class="fas fa-user mr-2"></i> User Info
+            </h6>
+        </div>
+        <div class="card-body">
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label class="text-muted">Username</label>
+                    <div class="font-weight-bold text-dark">
+                        @Html.DisplayFor(m => m.Username)
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <label class="text-muted">Email</label>
+                    <div class="font-weight-bold text-dark">
+                        @Html.DisplayFor(m => m.Email)
+                    </div>
+                </div>
+            </div>
 
-        <dt>@Html.DisplayNameFor(m => m.Email)</dt>
-        <dd>@Html.DisplayFor(m => m.Email)</dd>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label class="text-muted">Role</label>
+                    <div class="font-weight-bold text-dark">
+                        @Html.DisplayFor(m => m.Role)
+                    </div>
+                </div>
+            </div>
 
-        <dt>@Html.DisplayNameFor(m => m.Role)</dt>
-        <dd>@Html.DisplayFor(m => m.Role)</dd>
-    </dl>
+            <div class="mt-4">
+                @Html.ActionLink("Edit", "Edit", new { id = Model.UserId }, new { @class = "btn btn-primary mr-2" })
+                @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-secondary" })
+            </div>
+        </div>
+    </div>
 </div>
-
-<p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.UserId }, new { @class = "btn btn-primary" })
-    @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-secondary" })
-</p>

@@ -77,7 +77,8 @@
         {
             foreach (var user in Model)
             {
-                <tr>
+                <tr class="clickable-row" data-url="@Url.Action("Details", "Users", new { id = user.UserId })">
+
                     <td>@user.Username</td>
                     <td>@user.Email</td>
                     <td>@user.Role</td>
@@ -146,6 +147,13 @@
             if (createMsg) {
                 toastr.success(createMsg);
             }
+
+
+            $('.clickable-row').on('click', function (e) {
+                if (!$(e.target).is('a, button, i')) {
+                    window.location = $(this).data('url');
+                }
+            });
         });
     </script>
 }
