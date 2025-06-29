@@ -30,7 +30,22 @@ namespace inventory___sales_management_system.Controllers
             return View("_PdfFooter");
         }
 
-
+        private Rotativa.ViewAsPdf GeneratePdf(string viewName, object model)
+        {
+            return new Rotativa.ViewAsPdf(viewName, model)
+            {
+                PageSize = Rotativa.Options.Size.A4,
+                PageOrientation = Rotativa.Options.Orientation.Portrait,
+                CustomSwitches = string.Join(" ", new[]
+                {
+            $"--header-html \"{Url.Action("PdfHeader", "Report", null, Request.Url.Scheme)}\"",
+            "--header-spacing 5",
+            $"--footer-html \"{Url.Action("PdfFooter", "Report", null, Request.Url.Scheme)}\"",
+            "--footer-spacing 10",
+            "--margin-bottom 20mm"
+        })
+            };
+        }
         private List<SalesSummaryViewModel> GetMonthlySalesByDate(int year, int month)
         {
             DateTime start = new DateTime(year, month, 1);
@@ -346,15 +361,18 @@ namespace inventory___sales_management_system.Controllers
         private List<FastMovingProductViewModel> GetFastMovingProducts(int year, int month)
         {
             DateTime start = new DateTime(year, month, 1);
-            DateTime end = start.AddMonths(1);
+            DateTime today = DateTime.Today;
+            DateTime endDate = today < start.AddMonths(1) ? today : start.AddMonths(1).AddDays(-1);
 
             var productSales = db.SaleItems
-                .Where(si => si.Sale.Date >= start && si.Sale.Date < end)
+                .Where(si => si.Sale.Date >= start && si.Sale.Date <= endDate)
                 .GroupBy(si => new { si.Product.ProductId, si.Product.Name, si.Product.DateEdited })
                 .ToList()
                 .Select(g =>
                 {
-                    int daysActive = (int)Math.Max(1, (end - g.Key.DateEdited).TotalDays); // Avoid divide-by-zero
+                    var productDate = g.Key.DateEdited < endDate ? g.Key.DateEdited : endDate;
+                    int daysActive = (int)Math.Max(1, (endDate - productDate).TotalDays + 1);
+
                     int totalSold = g.Sum(x => x.Quantity);
 
                     return new FastMovingProductViewModel
@@ -370,6 +388,7 @@ namespace inventory___sales_management_system.Controllers
 
             return productSales;
         }
+
 
 
 
@@ -659,19 +678,8 @@ namespace inventory___sales_management_system.Controllers
             ViewBag.Month = month;
             ViewBag.GroupBy = groupBy;
 
-            return new Rotativa.ViewAsPdf("MonthlySalesSummaryPdf", summary)
-            {
-                PageSize = Rotativa.Options.Size.A4,
-                PageOrientation = Rotativa.Options.Orientation.Portrait,
-                CustomSwitches = string.Join(" ", new[]
-                {
-                    $"--header-html \"{Url.Action("PdfHeader", "Report", null, Request.Url.Scheme)}\"",
-                    "--header-spacing 5",
-                    $"--footer-html \"{Url.Action("PdfFooter", "Report", null, Request.Url.Scheme)}\"",
-                    "--footer-spacing 10",
-                    "--margin-bottom 20mm"
-                })
-            };
+            return GeneratePdf("MonthlySalesSummaryPdf", summary);
+            
         }
 
         [RoleAuthorize("Manager")]
@@ -681,19 +689,8 @@ namespace inventory___sales_management_system.Controllers
 
             ViewBag.LowStockOnly = lowStockOnly;
 
-            return new Rotativa.ViewAsPdf("ProductStockReportPdf", summary)
-            {
-                PageSize = Rotativa.Options.Size.A4,
-                PageOrientation = Rotativa.Options.Orientation.Portrait,
-                CustomSwitches = string.Join(" ", new[]
-                {
-                    $"--header-html \"{Url.Action("PdfHeader", "Report", null, Request.Url.Scheme)}\"",
-                    "--header-spacing 5",
-                    $"--footer-html \"{Url.Action("PdfFooter", "Report", null, Request.Url.Scheme)}\"",
-                    "--footer-spacing 10",
-                    "--margin-bottom 20mm"
-                })
-            };
+            return GeneratePdf("ProductStockReportPdf", summary);
+            
         }
 
         [RoleAuthorize("Manager")]
@@ -704,19 +701,8 @@ namespace inventory___sales_management_system.Controllers
             ViewBag.Year = year;
             ViewBag.Month = month;
 
-            return new Rotativa.ViewAsPdf("TopProductsPdf", summary)
-            {
-                PageSize = Rotativa.Options.Size.A4,
-                PageOrientation = Rotativa.Options.Orientation.Portrait,
-                CustomSwitches = string.Join(" ", new[]
-                {
-                    $"--header-html \"{Url.Action("PdfHeader", "Report", null, Request.Url.Scheme)}\"",
-                    "--header-spacing 5",
-                    $"--footer-html \"{Url.Action("PdfFooter", "Report", null, Request.Url.Scheme)}\"",
-                    "--footer-spacing 10",
-                    "--margin-bottom 20mm"
-                })
-            };
+            return GeneratePdf("TopProductsPdf", summary);
+            
         }
 
         [RoleAuthorize("Manager")]
@@ -725,18 +711,7 @@ namespace inventory___sales_management_system.Controllers
             var summary = GetSalesByMonthInYearSummary(year);
             ViewBag.Year = year;
 
-            return new Rotativa.ViewAsPdf("SalesByMonthInYearSummaryPdf", summary)
-            {
-                PageSize = Rotativa.Options.Size.A4,
-                PageOrientation = Rotativa.Options.Orientation.Portrait,
-                CustomSwitches = string.Join(" ", new[]
-                {
-                    $"--header-html \"{Url.Action("PdfHeader", "Report", null, Request.Url.Scheme)}\"",
-                    "--header-spacing 5",
-                    $"--footer-html \"{Url.Action("PdfFooter", "Report", null, Request.Url.Scheme)}\"",
-                    "--footer-spacing 10"
-                })
-            };
+            return GeneratePdf("SalesByMonthInYearSummaryPdf", summary);
         }
 
         [RoleAuthorize("Manager")]
@@ -745,18 +720,8 @@ namespace inventory___sales_management_system.Controllers
             var report = GetDeadStockReport(days);
             ViewBag.Days = days;
 
-            return new Rotativa.ViewAsPdf("DeadStockPdf", report)
-            {
-                PageSize = Rotativa.Options.Size.A4,
-                PageOrientation = Rotativa.Options.Orientation.Portrait,
-                CustomSwitches = string.Join(" ", new[]
-                {
-            $"--header-html \"{Url.Action("PdfHeader", "Report", null, Request.Url.Scheme)}\"",
-            "--header-spacing 5",
-            $"--footer-html \"{Url.Action("PdfFooter", "Report", null, Request.Url.Scheme)}\"",
-            "--footer-spacing 10"
-        })
-            };
+            return GeneratePdf("DeadStockPdf", report);
+            
         }
 
 
@@ -785,19 +750,8 @@ namespace inventory___sales_management_system.Controllers
             ViewBag.Month = month;
             ViewBag.GroupBy = groupBy;
 
-            return new Rotativa.ViewAsPdf("MonthlyProfitSummaryPdf", summary)
-            {
-                PageSize = Rotativa.Options.Size.A4,
-                PageOrientation = Rotativa.Options.Orientation.Portrait,
-                CustomSwitches = string.Join(" ", new[]
-                {
-                    $"--header-html \"{Url.Action("PdfHeader", "Report", null, Request.Url.Scheme)}\"",
-                    "--header-spacing 5",
-                    $"--footer-html \"{Url.Action("PdfFooter", "Report", null, Request.Url.Scheme)}\"",
-                    "--footer-spacing 10",
-                    "--margin-bottom 20mm"
-                })
-            };
+            return GeneratePdf("MonthlyProfitSummaryPdf", summary);
+            
         }
 
         [RoleAuthorize("Manager")]
@@ -806,18 +760,7 @@ namespace inventory___sales_management_system.Controllers
             var summary = GetProfitByMonthInYearSummary(year);
             ViewBag.Year = year;
 
-            return new Rotativa.ViewAsPdf("ProfitByMonthInYearSummaryPdf", summary)
-            {
-                PageSize = Rotativa.Options.Size.A4,
-                PageOrientation = Rotativa.Options.Orientation.Portrait,
-                CustomSwitches = string.Join(" ", new[]
-                {
-                    $"--header-html \"{Url.Action("PdfHeader", "Report", null, Request.Url.Scheme)}\"",
-                    "--header-spacing 5",
-                    $"--footer-html \"{Url.Action("PdfFooter", "Report", null, Request.Url.Scheme)}\"",
-                    "--footer-spacing 10"
-                })
-            };
+            return GeneratePdf("ProfitByMonthInYearSummaryPdf", summary);
         }
 
         [RoleAuthorize("Manager")]
@@ -828,19 +771,8 @@ namespace inventory___sales_management_system.Controllers
             ViewBag.Year = year;
             ViewBag.Month = month;
 
-            return new Rotativa.ViewAsPdf("FastMovingProductsPdf", summary)
-            {
-                PageSize = Rotativa.Options.Size.A4,
-                PageOrientation = Rotativa.Options.Orientation.Portrait,
-                CustomSwitches = string.Join(" ", new[]
-                {
-            $"--header-html \"{Url.Action("PdfHeader", "Report", null, Request.Url.Scheme)}\"",
-            "--header-spacing 5",
-            $"--footer-html \"{Url.Action("PdfFooter", "Report", null, Request.Url.Scheme)}\"",
-            "--footer-spacing 10",
-            "--margin-bottom 20mm"
-        })
-            };
+            return GeneratePdf("FastMovingProductsPdf", summary);
+
         }
 
 

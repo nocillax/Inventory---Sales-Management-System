@@ -158,6 +158,14 @@ namespace inventory___sales_management_system.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(CreateProductViewModel vm)
         {
+
+            bool productExists = db.Products.Any(p => p.Name.ToLower() == vm.Name.Trim().ToLower());
+
+            if (productExists)
+            {
+                ModelState.AddModelError("Name", "A product with this name already exists.");
+            }
+
             if (ModelState.IsValid)
             {
                 var product = new Product
@@ -176,6 +184,7 @@ namespace inventory___sales_management_system.Controllers
 
                 db.Products.Add(product);
                 db.SaveChanges();
+                TempData["ProductSuccessMessage"] = "Product created successfully!";
                 return RedirectToAction("Index");
             }
 
@@ -231,6 +240,14 @@ namespace inventory___sales_management_system.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(EditProductViewModel vm)
         {
+
+            bool productExists = db.Products
+            .Any(p => p.Name.ToLower() == vm.Name.Trim().ToLower() && p.ProductId != vm.ProductId);
+
+            if (productExists)
+            {
+                ModelState.AddModelError("Name", "A product with this name already exists.");
+            }
             if (ModelState.IsValid)
             {
                 var product = db.Products.Find(vm.ProductId);
@@ -249,7 +266,7 @@ namespace inventory___sales_management_system.Controllers
 
                 db.Entry(product).State = EntityState.Modified;
                 db.SaveChanges();
-
+                TempData["ProductSuccessMessage"] = "Product updated successfully!";
                 return RedirectToAction("Index");
             }
 
@@ -280,7 +297,7 @@ namespace inventory___sales_management_system.Controllers
             db.Products.Remove(product);
             db.SaveChanges();
 
-            TempData["DeleteMessage"] = "Product deleted successfully!";
+            TempData["ProductDeleteMessage"] = "Product deleted successfully!";
             return RedirectToAction("Index");
         }
 

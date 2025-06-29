@@ -78,10 +78,18 @@ namespace inventory___sales_management_system.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "CategoryId,Name")] Category category)
         {
+            bool categoryExists = db.Categories.Any(c => c.Name.ToLower() == category.Name.Trim().ToLower());
+
+            if (categoryExists)
+            {
+                ModelState.AddModelError("Name", "A category with this name already exists.");
+            }
+
             if (ModelState.IsValid)
             {
                 db.Categories.Add(category);
                 db.SaveChanges();
+                TempData["CategorySuccessMessage"] = "Category created successfully.";
                 return RedirectToAction("Index");
             }
 
@@ -110,10 +118,19 @@ namespace inventory___sales_management_system.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "CategoryId,Name")] Category category)
         {
+            bool categoryExists = db.Categories
+            .Any(c => c.Name.ToLower() == category.Name.Trim().ToLower() && c.CategoryId != category.CategoryId);
+
+            if (categoryExists)
+            {
+                ModelState.AddModelError("Name", "A category with this name already exists.");
+            }
+
             if (ModelState.IsValid)
             {
                 db.Entry(category).State = EntityState.Modified;
                 db.SaveChanges();
+                TempData["CategorySuccessMessage"] = "Category updated successfully.";
                 return RedirectToAction("Index");
             }
             return View(category);
@@ -136,7 +153,7 @@ namespace inventory___sales_management_system.Controllers
             db.Categories.Remove(category);
             db.SaveChanges();
 
-            TempData["DeleteMessage"] = "Category deleted successfully. Products updated.";
+            TempData["CategoryDeleteMessage"] = "Category deleted successfully.";
             return RedirectToAction("Index");
         }
 

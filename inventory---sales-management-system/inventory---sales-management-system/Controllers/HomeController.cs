@@ -270,13 +270,17 @@ namespace inventory___sales_management_system.Controllers
 
 
 
+
+            DateTime today = DateTime.Today;
+
             var fastestMoving = db.SaleItems
-                .Where(si => si.Sale.Date >= startOfMonth)
+                .Where(si => si.Sale.Date >= startOfMonth && si.Sale.Date <= today)
                 .GroupBy(si => new { si.Product.ProductId, si.Product.Name, si.Product.DateEdited })
                 .ToList()
                 .Select(g =>
                 {
-                    var activeDays = Math.Max(1, (DateTime.Today - g.Key.DateEdited).Days + 1);
+                    var productDate = g.Key.DateEdited < today ? g.Key.DateEdited : today;
+                    var activeDays = Math.Max(1, (today - productDate).Days + 1);
                     var qtySold = g.Sum(x => x.Quantity);
                     return new
                     {
